@@ -50,14 +50,28 @@ public class LinkerTable implements LinkerTabelInterface {
 
 	@Override
 	public boolean isDefined(String name) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		//if defined return true
+		if(symTable.contains(name))
+		{
+			return true;
+		}
+		
+		//else return false
+		else
+		{
+			return false;
+		}
+		
 	}
 
 	@Override
 	public int getLocation(String name) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		//return location at index of name
+		return locTable.get(symTable.indexOf(name));
 	}
 
+	
+	
 }
