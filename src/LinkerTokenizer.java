@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 
-public class Tokenizer implements TokenizerInterface {
+public class LinkerTokenizer implements LinkerTokenizerInterface {
 	private ArrayList<String> pipeArray;
 	private ArrayList<String> spaceArray;
 

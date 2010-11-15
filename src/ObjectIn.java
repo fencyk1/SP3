@@ -31,7 +31,7 @@ public class ObjectIn implements ObjectInInterface{
 			System.out.println(line);
 			
 			//create tokenizer object
-			TokenizerInterface tokenizer = new Tokenizer();
+			LinkerTokenizerInterface tokenizer = new LinkerTokenizer();
 			
 			//tokenize line and add to object
 			objectArray.add(tokenizer.tokenize(line));

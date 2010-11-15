@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * @author Everett
  *
  */
-public interface TokenizerInterface {
+public interface LinkerTokenizerInterface {
 
 	/**
 	 * This will take a string and separate it into tokens by white space.
