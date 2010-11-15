@@ -1,30 +1,75 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Linker {
 
 	/**
 	 * @param args
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
-		//import object files into object arrays
+		//create global variables
+		ArrayList<ArrayList<String>> objectArray;
+		boolean validObject = true;
+
 		
-		//check object array validity
+		//begin loop for multiple files
+		for(int inc = 0; inc < args.length; inc++)
+		{
 		
-		//create symbol table
+			//import object files into object arrays
+			//class object imports
+			ObjectInInterface objectFile = new ObjectIn();
+			
+			//make objecFileName from args
+			File objectFileName = new File(args[inc]);
+			
+			//Read object file
+			objectFile.readObjectFile(objectFileName);
 		
-		//populate symbol table
+			//create object array
+			objectArray = objectFile.outputObjectArray();
+			
+			//set validObject boolean
+			validObject = checkObjectValidity(objectArray);
+			
+			//if the object is valid, then
+			if (validObject)
+			{
+				//create symbol table
+		
+				//populate symbol table
+		
+			}
+			
+			
+			
+		
+			
+			
+		//end for loop for multiple files
+		}
+		
+		//things that need to be done outside of loop
+		//they need all objects to be processed before they can be done
+		
 		
 		//create linker file
 		
 		//transfer text records into linker file and adjust as needed
 		
 		
-		
 
 	}
 	
-	static void checkObjectValidity(ArrayList<ArrayList<String>> objetArray)
+	/**This method will check if the object file is valid.
+	 * 
+	 * @param objectArray ArrayList<ArrayList<String>> containing tokenized object file
+	 * @return true if object is valid
+	 */
+	static boolean checkObjectValidity(ArrayList<ArrayList<String>> objectArray)
 	{
 		
 		//check for header
@@ -32,7 +77,7 @@ public class Linker {
 		
 		//check the rest of the records  have valid labels and sizes
 		
-		
+		return false;
 	}
 
 }
