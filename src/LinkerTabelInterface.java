@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 /**
  * 
  */
@@ -43,9 +45,14 @@ public interface LinkerTabelInterface {
 	 */
 	int getLocation(String name);
 	
-	/**This method will print out the symbol table to the console
+	/**This method will print out the symbol table to the console.
 	 * 
 	 */
 	void print();
 	
+	/**
+	 * This method will print out the symbol table into a file called "GlobalSymbolTable.txt".
+	 * @throws IOException 
+	 */
+	void printToFile() throws IOException;
 }

@@ -1,3 +1,8 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 
@@ -90,6 +95,32 @@ public class LinkerTable implements LinkerTabelInterface {
 			
 			//print symbol location followed by new line
 			System.out.println(locTable.get(inc));
+			
+		}
+		
+	}
+
+	@Override
+	public void printToFile() throws IOException {
+
+		//create file
+		PrintWriter out = new PrintWriter (new BufferedWriter(new FileWriter(new File("GlobalSymbolTable.txt"))));
+
+		//print heading
+		out.println("Name\tType\tLocation");
+		
+		//loop though and output all tables
+		for(int inc = 0; inc < symTable.size(); inc++)
+		{
+			
+			//print symbol name followed by tab
+			out.print(symTable.get(inc) + "\t");
+			
+			//print symbol type followed by tab
+			out.print(typeTable.get(inc) + "\t");
+			
+			//print symbol location followed by new line
+			out.println(locTable.get(inc));
 			
 		}
 		
