@@ -43,6 +43,9 @@ public interface LinkerTabelInterface {
 	 */
 	int getLocation(String name);
 	
-	
+	/**This method will print out the symbol table to the console
+	 * 
+	 */
+	void print();
 	
 }

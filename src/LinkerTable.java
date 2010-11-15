@@ -72,6 +72,29 @@ public class LinkerTable implements LinkerTabelInterface {
 		return locTable.get(symTable.indexOf(name));
 	}
 
+	@Override
+	public void print() {
+
+		//print heading
+		System.out.println("Name\tType\tLocation");
+		
+		//loop though and output all tables
+		for(int inc = 0; inc < symTable.size(); inc++)
+		{
+			
+			//print symbol name followed by tab
+			System.out.print(symTable.get(inc) + "\t");
+			
+			//print symbol type followed by tab
+			System.out.print(typeTable.get(inc) + "\t");
+			
+			//print symbol location followed by new line
+			System.out.println(locTable.get(inc));
+			
+		}
+		
+	}
+
 	
 	
 }
