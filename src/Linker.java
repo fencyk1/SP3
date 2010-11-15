@@ -6,7 +6,9 @@ public class Linker {
 	static ObjectInInterface object1 = new ObjectIn();
 	static ObjectInInterface object2 = new ObjectIn(); 
 	static ObjectInInterface object3 = new ObjectIn();
-	
+	static ObjectInInterface object4 = new ObjectIn();
+	static ObjectInInterface object5 = new ObjectIn();
+
 	
 	
 	/**
@@ -61,6 +63,14 @@ public class Linker {
 				else if(inc == 2)
 				{
 					object3 = objectFile;
+				}
+				else if(inc == 3)
+				{
+					object4 = objectFile;
+				}
+				else if(inc == 4)
+				{
+					object5 = objectFile;
 				}
 				
 			}
