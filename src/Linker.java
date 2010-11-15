@@ -3,7 +3,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Linker {
-
+	static ObjectInInterface object1 = new ObjectIn();
+	static ObjectInInterface object2 = new ObjectIn(); 
+	static ObjectInInterface object3 = new ObjectIn();
+	
+	
+	
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -13,10 +18,12 @@ public class Linker {
 		//create global variables
 		ArrayList<ArrayList<String>> objectArray;
 		boolean validObject = true;
+		LinkerTableInterface GST = new LinkerTable();
+		
 
 		
 		//begin loop for multiple files
-		for(int inc = 0; inc < args.length; inc++)
+		for(int inc = 0; inc < args.length && inc < 2; inc++)
 		{
 		
 			//import object files into object arrays
@@ -38,12 +45,31 @@ public class Linker {
 			//if the object is valid, then
 			if (validObject)
 			{
-				//create symbol table
-		
+				
 				//populate symbol table
-		
+				populateSymbolTable(GST, objectFile);
+				
+				//store in appropriate ObjectIn global var
+				if(inc == 0)
+				{
+					object1 = objectFile;
+				}
+				else if(inc == 1)
+				{
+					object2 = objectFile;
+				}
+				else if(inc == 2)
+				{
+					object3 = objectFile;
+				}
+				
 			}
 			
+			//else, output error 
+			else
+			{
+				
+			}
 			
 			
 		
@@ -58,8 +84,17 @@ public class Linker {
 		
 		//create linker file
 		
-		//transfer text records into linker file and adjust as needed
-		
+		// iteration:
+		// if objectX [0<X<2] is not empty, call the buildLinkerFile method on it
+				// transfer text records into linker file and adjust as needed
+		/* --> check that whatever is external in one place is internal in another
+					- if not internal elsewhere, throw error and *abort* 
+						[will likely create issues elsewhere in code]
+					- "external label is not defined internally anywhere"
+		  <--
+		*/
+		// else: just skip to the next until no other objectIn's need be 'linked'
+				
 		
 
 	}
@@ -87,7 +122,7 @@ public class Linker {
 	    /*  
 	        Four cases for going through lines: header rec, linking rec, text rec, end rec:
 	        Check first line; should be header record. If not, throw 'no/missing header record' error and abort
-	            -boolean hasHeader to check??
+	            -boolean hasHeader to check ???
 	    */
 
 	    /*
@@ -138,7 +173,8 @@ public class Linker {
 	        -if no syntax errors or other issues:
 	            -update global symbol table with newly found symbol
 	            ==>what else for linking records ??
-
+				
+			
 	    */
 
 	    /*
@@ -153,7 +189,7 @@ public class Linker {
 	            ==>check program name with that of the header record???
 
 	        -if no syntax errors or other issues:
-	            -check "total number of records" field with computation [textRecs + linkRecs + 2]
+	            -check "total number of records" [imp'd by objectX.size] field with computation [textRecs + linkRecs + 2]
 	                -if not equal, throw error for unequal record number field
 	            -set boolean hasEnded to true
 	            ==>what else for end records ??             
@@ -172,8 +208,11 @@ public class Linker {
 	        -ensure program length, assembler assigned program load address, and Execution start address for this module
 	         are all == four hex digits
 	            -also check for validity of address bounds; if violated give 'address out of bounds' error [abort?]
-
-
+		
+			---> use the .equals function for checking String objects
+			
+			
+			
 	    */
 
 
@@ -184,4 +223,29 @@ public class Linker {
 		return false;
 	}
 
+	/**This method takes an ObjectIn object file and output the correct parts to the linker
+	 * file.
+	 * 
+	 * @param linkerFile = the file to output to
+	 * @param symbolTable = the object containing the linker's global symbol table
+	 * @param objectfile = the ObjectIn containing the object file to be converted
+	 */
+	static void buildLinkerFile(File linkerFile, LinkerTableInterface symbolTable, ObjectInInterface objectfile)
+	{
+		//TODO: everything
+	}
+
+	/**This method takes an ObjectIn and and gets the linker records and inputs the needed
+	 * data into the LinkerTable(also know as the global symbol table).
+	 * 
+	 * @param symbolTable
+	 * @param objectFile
+	 */
+	static void populateSymbolTable(LinkerTableInterface symbolTable, ObjectInInterface objectFile)
+	{
+		//TODO: everything
+		
+		
+	}
+	
 }

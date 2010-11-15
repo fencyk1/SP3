@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author Everett
  *
  */
-public interface LinkerTabelInterface {
+public interface LinkerTableInterface {
 
 	/**This method adds a symbol to the symbol table
 	 * 

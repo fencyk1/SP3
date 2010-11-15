@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 
-public class LinkerTable implements LinkerTabelInterface {
+public class LinkerTable implements LinkerTableInterface {
 	private ArrayList<String> symTable = new ArrayList<String>(0);
 	private ArrayList<String> typeTable = new ArrayList<String>(0);
 	private ArrayList<Integer> locTable = new ArrayList<Integer>(0);
