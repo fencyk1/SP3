@@ -48,9 +48,6 @@ public class Linker {
 			if (validObject)
 			{
 				
-				//populate symbol table
-				populateSymbolTable(GST, objectFile);
-				
 				//store in appropriate ObjectIn global var
 				if(inc == 0)
 				{
@@ -87,6 +84,12 @@ public class Linker {
 			
 		//end for loop for multiple files
 		}
+		
+		//populate symbol table
+		populateSymbolTable(GST);
+		
+		
+		
 		
 		//things that need to be done outside of loop
 		//they need all objects to be processed before they can be done
@@ -251,9 +254,51 @@ public class Linker {
 	 * @param symbolTable
 	 * @param objectFile
 	 */
-	static void populateSymbolTable(LinkerTableInterface symbolTable, ObjectInInterface objectFile)
+	static void populateSymbolTable(LinkerTableInterface symbolTable)
 	{
-		//TODO: everything
+		
+		//create converter class
+		ConverterInterface converter = new Converter();
+		
+		//storage variables
+		int startLocation = 0; //this will hold the beginning address of the program
+		
+		//create objectArrays
+		ArrayList<ArrayList<String>> object1Array = object1.outputObjectArray();
+		ArrayList<ArrayList<String>> object2Array = object2.outputObjectArray();
+		ArrayList<ArrayList<String>> object3Array = object3.outputObjectArray();
+		ArrayList<ArrayList<String>> object4Array = object4.outputObjectArray();
+		ArrayList<ArrayList<String>> object5Array = object5.outputObjectArray();
+		
+		
+		//get start location
+		startLocation = Integer.parseInt(converter.hexToDec(object1Array.get(0).get(4)));
+		
+		
+		
+		
+		//increment through object1Array and find the linker files
+		for(int inc = 0; inc < object1Array.size(); inc ++)
+		{
+			
+			//check record type. If 'L' continue
+			if (object1Array.get(inc).get(0).equals("L"))
+			{
+				
+				//get name
+				String name = object1Array.get(inc).get(1);
+				
+				//get type
+				String type = object1Array.get(inc).get(3);
+				
+				//get location
+				int location = Integer.parseInt(converter.hexToDec(object1Array.get(inc).get(2)));
+				
+				//add to symbol table
+				symbolTable.add(name, type, location);
+			}
+			
+		}
 		
 		
 	}
