@@ -254,7 +254,7 @@ public class Linker {
 	 * @param symbolTable
 	 * @param objectFile
 	 */
-	static void populateSymbolTable(LinkerTableInterface symbolTable)
+	static boolean populateSymbolTable(LinkerTableInterface symbolTable)
 	{
 		
 		//create converter class
@@ -280,6 +280,14 @@ public class Linker {
 		
 		//get start location
 		startLocation = Integer.parseInt(converter.hexToDec(object1Array.get(0).get(4)));
+		
+		//check startLocation does not exceed length
+		if(startLocation >= 65536)
+		{
+			//print error message and return false
+			System.out.println("Length of linked programs exceeds memory.");
+			return false;
+		}
 		
 		if (object1Array.size() > 0)
 		{
@@ -320,6 +328,15 @@ public class Linker {
 		
 		
 		
+		//check startLocation does not exceed length
+		if(startLocation >= 65536)
+		{
+			//print error message and return false
+			System.out.println("Length of linked programs exceeds memory.");
+			return false;
+		}
+		
+		
 		//populate from object 2
 		if (object2Array.size() > 0)
 		{
@@ -356,6 +373,16 @@ public class Linker {
 			//modify start location to the beginning of the third program
 			startLocation += Integer.parseInt(converter.hexToDec(object2Array
 					.get(0).get(2)));
+		}
+		
+		
+		
+		//check startLocation does not exceed length
+		if(startLocation >= 65536)
+		{
+			//print error message and return false
+			System.out.println("Length of linked programs exceeds memory.");
+			return false;
 		}
 		
 		
@@ -398,6 +425,16 @@ public class Linker {
 		}
 		
 		
+		
+		//check startLocation does not exceed length
+		if(startLocation >= 65536)
+		{
+			//print error message and return false
+			System.out.println("Length of linked programs exceeds memory.");
+			return false;
+		}
+		
+		
 		//polulate from object 4
 		if (object4Array.size() > 0)
 		{
@@ -437,6 +474,16 @@ public class Linker {
 		}
 		
 		
+		//check startLocation does not exceed length
+		if(startLocation >= 65536)
+		{
+			//print error message and return false
+			System.out.println("Length of linked programs exceeds memory.");
+			return false;
+		}
+		
+		
+		
 		//polulate from object 5
 		if (object5Array.size() > 0)
 		{
@@ -470,7 +517,32 @@ public class Linker {
 				}
 
 			}
+			
+			//modify start location to the end of the fifth program
+			startLocation += Integer.parseInt(converter.hexToDec(object5Array
+					.get(0).get(2)));
 		}
+		
+		
+		//check startLocation does not exceed length
+		if(startLocation >= 65536)
+		{
+			//print error message and return false
+			System.out.println("Length of linked programs exceeds memory.");
+			return false;
+		}
+		
+		
+		//if successful return true
+		return true;
+		
+		
+		
+		
 	}
+	
+	
+	
+	
 	
 }
