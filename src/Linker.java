@@ -263,6 +263,10 @@ public class Linker {
 		//storage variables
 		int startLocation = 0; //this will hold the beginning address of the program
 		
+		//this variable holds the difference between the prog's mem load address and the linker's
+		int diffOfLoc = 0; 
+		
+		
 		//create objectArrays
 		ArrayList<ArrayList<String>> object1Array = object1.outputObjectArray();
 		ArrayList<ArrayList<String>> object2Array = object2.outputObjectArray();
@@ -271,36 +275,202 @@ public class Linker {
 		ArrayList<ArrayList<String>> object5Array = object5.outputObjectArray();
 		
 		
+		
+		//populate from object1
+		
 		//get start location
 		startLocation = Integer.parseInt(converter.hexToDec(object1Array.get(0).get(4)));
 		
-		
-		
-		
-		//increment through object1Array and find the linker files
-		for(int inc = 0; inc < object1Array.size(); inc ++)
+		if (object1Array.size() > 0)
 		{
-			
-			//check record type. If 'L' continue
-			if (object1Array.get(inc).get(0).equals("L"))
-			{
-				
-				//get name
-				String name = object1Array.get(inc).get(1);
-				
-				//get type
-				String type = object1Array.get(inc).get(3);
-				
-				//get location
-				int location = Integer.parseInt(converter.hexToDec(object1Array.get(inc).get(2)));
-				
-				//add to symbol table
-				symbolTable.add(name, type, location);
+			//populate from object 1
+			//set diffOfLoc for program 1
+			//diffOfLoc equals startLocation minus prog load address
+			diffOfLoc = startLocation
+					- Integer.parseInt(converter.hexToDec(object1Array.get(0)
+							.get(3)));
+			//increment through object1Array and find the linker files
+			for (int inc = 0; inc < object1Array.size(); inc++) {
+
+				//check record type. If 'L' continue
+				if (object1Array.get(inc).get(0).equals("L")) {
+
+					//get name
+					String name = object1Array.get(inc).get(1);
+
+					//get type
+					String type = object1Array.get(inc).get(3);
+
+					//get location
+					int location = Integer.parseInt(converter
+							.hexToDec(object1Array.get(inc).get(2)));
+
+					//modify location due to load address differences
+					location += diffOfLoc;
+
+					//add to symbol table
+					symbolTable.add(name, type, location);
+				}
+
 			}
-			
+			//modify start location to the beginning of the second program
+			startLocation += Integer.parseInt(converter.hexToDec(object1Array
+					.get(0).get(2)));
 		}
 		
 		
+		
+		//populate from object 2
+		if (object2Array.size() > 0)
+		{
+			//set diffOfLoc for program 2
+			//diffOfLoc equals startLocation minus prog load address
+			diffOfLoc = startLocation
+					- Integer.parseInt(converter.hexToDec(object2Array.get(0)
+							.get(3)));
+			//populate from object2
+			//increment through object1Array and find the linker files
+			for (int inc = 0; inc < object2Array.size(); inc++) {
+
+				//check record type. If 'L' continue
+				if (object2Array.get(inc).get(0).equals("L")) {
+
+					//get name
+					String name = object2Array.get(inc).get(1);
+
+					//get type
+					String type = object2Array.get(inc).get(3);
+
+					//get location
+					int location = Integer.parseInt(converter
+							.hexToDec(object2Array.get(inc).get(2)));
+
+					//modify location due to load address differences
+					location += diffOfLoc;
+
+					//add to symbol table
+					symbolTable.add(name, type, location);
+				}
+
+			}
+			//modify start location to the beginning of the third program
+			startLocation += Integer.parseInt(converter.hexToDec(object2Array
+					.get(0).get(2)));
+		}
+		
+		
+		//populate from object 3
+		if (object3Array.size() > 0)
+		{
+			//set diffOfLoc for program 3
+			//diffOfLoc equals startLocation minus prog load address
+			diffOfLoc = startLocation
+					- Integer.parseInt(converter.hexToDec(object3Array.get(0)
+							.get(3)));
+			//populate from object3
+			//increment through object1Array and find the linker files
+			for (int inc = 0; inc < object3Array.size(); inc++) {
+
+				//check record type. If 'L' continue
+				if (object3Array.get(inc).get(0).equals("L")) {
+
+					//get name
+					String name = object3Array.get(inc).get(1);
+
+					//get type
+					String type = object3Array.get(inc).get(3);
+
+					//get location
+					int location = Integer.parseInt(converter
+							.hexToDec(object3Array.get(inc).get(2)));
+
+					//modify location due to load address differences
+					location += diffOfLoc;
+
+					//add to symbol table
+					symbolTable.add(name, type, location);
+				}
+
+			}
+			//modify start location to the beginning of the fourth program
+			startLocation += Integer.parseInt(converter.hexToDec(object3Array
+					.get(0).get(2)));
+		}
+		
+		
+		//polulate from object 4
+		if (object4Array.size() > 0)
+		{
+			//set diffOfLoc for program 4
+			//diffOfLoc equals startLocation minus prog load address
+			diffOfLoc = startLocation
+					- Integer.parseInt(converter.hexToDec(object4Array.get(0)
+							.get(3)));
+			//populate from object4
+			//increment through object1Array and find the linker files
+			for (int inc = 0; inc < object2Array.size(); inc++) {
+
+				//check record type. If 'L' continue
+				if (object4Array.get(inc).get(0).equals("L")) {
+
+					//get name
+					String name = object4Array.get(inc).get(1);
+
+					//get type
+					String type = object4Array.get(inc).get(3);
+
+					//get location
+					int location = Integer.parseInt(converter
+							.hexToDec(object4Array.get(inc).get(2)));
+
+					//modify location due to load address differences
+					location += diffOfLoc;
+
+					//add to symbol table
+					symbolTable.add(name, type, location);
+				}
+
+			}
+			//modify start location to the beginning of the fifth program
+			startLocation += Integer.parseInt(converter.hexToDec(object4Array
+					.get(0).get(2)));
+		}
+		
+		
+		//polulate from object 5
+		if (object5Array.size() > 0)
+		{
+			//set diffOfLoc for program 5
+			//diffOfLoc equals startLocation minus prog load address
+			diffOfLoc = startLocation
+					- Integer.parseInt(converter.hexToDec(object5Array.get(0)
+							.get(3)));
+			//populate from object2
+			//increment through object1Array and find the linker files
+			for (int inc = 0; inc < object5Array.size(); inc++) {
+
+				//check record type. If 'L' continue
+				if (object5Array.get(inc).get(0).equals("L")) {
+
+					//get name
+					String name = object5Array.get(inc).get(1);
+
+					//get type
+					String type = object5Array.get(inc).get(3);
+
+					//get location
+					int location = Integer.parseInt(converter
+							.hexToDec(object5Array.get(inc).get(2)));
+
+					//modify location due to load address differences
+					location += diffOfLoc;
+
+					//add to symbol table
+					symbolTable.add(name, type, location);
+				}
+
+			}
+		}
 	}
 	
 }
