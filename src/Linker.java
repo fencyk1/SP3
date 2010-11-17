@@ -16,7 +16,7 @@ public class Linker {
 	static private ArrayList<ArrayList<ArrayList<String>>> objectArrays = new ArrayList<ArrayList<ArrayList<String>>>(5);
 
 	//linker error output
-	File LinkerUserReport = new File("LinkerUserReport.txt");
+	static private File LinkerUserReport = new File("LinkerUserReport.txt");
 	
 	
 	/**
@@ -30,7 +30,10 @@ public class Linker {
 		boolean validObject = true;
 		LinkerTableInterface GST = new LinkerTable();
 		
+		
 
+		//create printWriter for linkerFile
+		PrintWriter UserOut = new PrintWriter (new BufferedWriter(new FileWriter(LinkerUserReport)));
 		
 		//begin loop for multiple files
 		for(int inc = 0; inc < args.length && inc < 2; inc++)
@@ -50,7 +53,7 @@ public class Linker {
 			objectArray = objectFile.outputObjectArray();
 			
 			//set validObject boolean
-			validObject = checkObjectValidity(objectArray);
+			validObject = checkObjectValidity(objectArray, UserOut);
 			
 			//if the object is valid, then
 			if (validObject)
@@ -130,6 +133,7 @@ public class Linker {
 		
 		//finish
 		out.close();
+		UserOut.close();
 		System.out.println(">>>>>>>> Linking Complete <<<<<<<<");
 		
 
@@ -140,7 +144,7 @@ public class Linker {
 	 * @param objectArray ArrayList<ArrayList<String>> containing tokenized object file
 	 * @return true if object is valid
 	 */
-	static boolean checkObjectValidity(ArrayList<ArrayList<String>> objectArray)
+	static boolean checkObjectValidity(ArrayList<ArrayList<String>> objectArray, PrintWriter out)
 	{
 		
 		// declaring global variables to use throughout the method
@@ -800,7 +804,7 @@ public class Linker {
 	 * @param objectfile = the ObjectIn containing the object file to be converted
 	 * @throws IOException 
 	 */
-	static int buildLinkerFile(PrintWriter out, LinkerTableInterface symbolTablet ) throws IOException
+	static int buildLinkerFile(PrintWriter out, LinkerTableInterface symbolTable ) throws IOException
 	{
 		//TODO: finish E case
 		
@@ -839,27 +843,61 @@ public class Linker {
 
 					//store hex code as string
 					String code = objectArrays.get(i).get(inc).get(3);
-					int intCode = Integer.parseInt(converter.hexToDec(code));
+					Integer intCode = Integer.parseInt(converter.hexToDec(code));
 
-					//mod code if it is R+ , R- , or E type
-					//if R+ type add startLocation to address section of code
-					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R+"))
+					//mod code if it is R, or E type
+					
+					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R"))
 					{
-						intCode += startLocation;
+						
+						//if R- type subtract startLocation from address section of code
+						if (objectArrays.get(i).get(inc).get(6).equalsIgnoreCase("-"))
+						{
+							intCode -= startLocation;
+						}
+						
+						//if R+ type add startLocation to address section of code
+						else if (objectArrays.get(i).get(inc).get(6).equalsIgnoreCase("-"))
+						{
+							intCode += startLocation;
+						}
+						
 					}
 
-					//if R- type subtract startLocation from address section of code
-					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R-"))
-					{
-						intCode -= startLocation;
-					}
+					
 
 					//if E type 
 					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("E"))
 					{
 						
+						int j = 5;
+						
+						while (objectArrays.get(i).get(inc).get(j).equalsIgnoreCase("E")) {
+							
+							
+							//if - subtract address of label from intCode
+							if ( objectArrays.get(i).get(inc).get(j + 1).equalsIgnoreCase("-"))
+							{
+								intCode -= symbolTable.getLocation(objectArrays.get(i).get(inc).get(j + 2));
+							}
+							
+							//if + subtract address of label from intCode
+							else if ( objectArrays.get(i).get(inc).get(j + 1).equalsIgnoreCase("+"))
+							{
+								intCode += symbolTable.getLocation(objectArrays.get(i).get(inc).get(j + 2));
+							}
+							
+							//increment j by 3 to get to next possible 'E'
+							j += 3;
+						}
+						
+						
+						
+						
 					}
 					
+					//convert code back to hex
+					code = converter.decimalToHex(intCode.toString());
 					
 					//get loadAddress
 					loadAddress = Integer.parseInt(converter.hexToDec(objectArrays.get(i).get(inc).get(1)));
@@ -868,7 +906,8 @@ public class Linker {
 					loadAddress += diffOfLoc;
 					
 					//add to linkerfile here
-					out.println("LT|" + loadAddress.toString() + "|" + code + "|" + objectArrays.get(i).get(0).get(1));
+					out.println("LT|" + objectArrays.get(i).get(0).get(2) + "|" + loadAddress.toString() + 
+							"|" + code + "|" + objectArrays.get(i).get(0).get(1));
 					
 					recordCount++;
 					
