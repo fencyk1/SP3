@@ -120,11 +120,239 @@ public class Linker {
 	static boolean checkObjectValidity(ArrayList<ArrayList<String>> objectArray)
 	{
 		
-		//check for header
-		
-		
-		//check the rest of the records  have valid labels and sizes
-		
+		// declaring global variables to use throughout the method
+	    boolean isValid = true;
+
+	    // a converter used to convert hex values into decimal for validation purposes
+	    ConverterInterface conv = new Converter();
+
+	    // boolean value to check first line to see if it is a header record, as it should be;
+	    // after first check, acts as a swtich telling the method whether or not a program has begun
+	    boolean hasHeader = false;
+
+	    // boolean acting as a switch, telling the method whether or not a program has ended
+	    boolean hasEnded = true;
+
+	    // keeps track of the total number of text records and linking records in the object file
+	    int textRecs = 0; 
+	    int linkRecs = 0;
+
+	    // int to keep track of the current record position being validated
+	    // will start at one because the first record should be a header record and 
+	    // is being validated anyways
+	    int recordNum = 1;
+
+	    // the program name to be stored; should be consistent throughout the object file
+	    //[linker-adjusted loading address to use for overall linking file address]
+	    String linkLoadAddr = null;
+
+	    // [execution start address for program]
+	    String execStartAddr = null;
+
+	     //[program length]
+	    String pgmLen = null;
+
+	    //check for header
+
+	    // create arraylist that holds the first record of the object file
+	    ArrayList<String> firstRec = new ArrayList<String>(objectArray.get(0));
+
+	    // holds value of the first character in what should be the header record
+	    char head = firstRec.get(0).charAt(0);
+
+	    /*
+	     if the first character isn't an 'H' or 'h', or if the length of the header file then
+	     report invalid header file error and abort.
+	    */
+	    if(! (head == 'H' && firstRec.size() == 13))
+	    {
+	        // errors put into linking file??
+	        System.out.println("Error at record 0: INVALID HEADER RECORD! ABORTING LINKING PROCESS");
+	        return hasHeader;
+	    }
+
+	    // otherwise, dig through the header record
+
+	    // first things first, setting the switches correctly. This object file has a header record
+	    // and has not run into an end record yet.
+	    hasHeader = true;
+	    hasEnded = false;
+
+	    // save the name of the program
+	    String pgmName = firstRec.get(1);
+
+	    // check module name in second field with program name in 12th field
+	    if(!(pgmName == firstRec.get(12)))
+	    {
+	        System.out.println("Error at record 0: module name and program name fields do not match");
+	        isValid = false;
+	    }
+
+	    // check validity of each hex field, then verify the length
+
+	    // if the program length is not in valid hex OR is too long ... 
+	    if(!(conv.isValidHex(pgmLen) && pgmLen.length() <= 4))
+	    {
+
+	        // throw the error and declare invalidity
+	        System.out.println("Error at record 0: program length field is not in valid syntax: "
+	                + " \"hhhh\" where h is a valid hexadecimal number");
+	        isValid = false;
+	    }
+
+	    // if the assembler assigned program load address is not in valid hex OR is too long ... 
+	    if(!(conv.isValidHex(linkLoadAddr) && pgmLen.length() <= 4))
+	    {
+
+	        // throw the error and declare invalidity
+	        System.out.println("Error at record 0: assembler assigned program load address"
+	                + " field is not in valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	        isValid = false;
+	    }
+
+	    // if the execution start address is not in valid hex OR is too long ... 
+	    if(!(conv.isValidHex(execStartAddr) && pgmLen.length() <= 4))
+	    {
+
+	        // throw the error and declare invalidity
+	        System.out.println("Error at record 0: execution start address field is not in"
+	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	        isValid = false;
+	    }
+
+	    // if the number of text records is not in valid hex OR is too long ... 
+	    if(!(conv.isValidHex(firstRec.get(7)) && pgmLen.length() <= 4))
+	    {
+
+	        // throw the error and declare invalidity
+	        System.out.println("Error at record 0: number of text records field is not in"
+	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	        isValid = false;
+	    }
+	    else
+	    {
+
+	        // save the value for the number of text records expected
+	        textRecs = Integer.parseInt(conv.hexToDec(firstRec.get(7)));
+	    }
+
+	    // if the number of linking records is not in valid hex OR is too long ... 
+	    if(!(conv.isValidHex(firstRec.get(6)) && pgmLen.length() <= 4))
+	    {
+
+	        // throw the error and declare invalidity
+	        System.out.println("Error at record 0: number of linking records field is not in"
+	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	        isValid = false;
+	    }
+	    else
+	    {
+
+	        // save the value for the number of linking records expected
+	        linkRecs = Integer.parseInt(firstRec.get(6));
+	    }
+
+	    // --------check the date field for proper syntax and values--------- //
+
+	    // string for the year portion of the date field
+	    String year = firstRec.get(4).substring(0, 4);
+
+	    // if the year is too far in the future ...
+	    if(Integer.parseInt(year) > 2010)
+	    {
+
+	        //  give a [funny ;} ] warning
+	        System.out.println("Warning: given year is too far in the future!"
+	                + "\nRecommended action: give Marty McFly his time machine back.");
+	    }
+
+	     // if the year is too far in the past ...
+	    else if(Integer.parseInt(year) < 2010)
+	        {
+
+	            //  give a [funny ;} ] warning
+	            System.out.println("Warning: given year is too far in the past!"
+	                    + "\nRecommended action: borrow Marty McFly's time machine and go back to the future.");
+	        }
+
+	    // string for the day portion of the date field
+	    String day = firstRec.get(4).substring(5);
+
+	    // check bounds for the day; anything else that should be checked ???
+	    if(!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365))
+	    {
+
+	        //  give a [funny ;} ] warning
+	        System.out.println("Warning: given day is outside reasonable bounds for the day."
+	                + "\nRecommended action: check syntax, or if in a leap year, please try again tomorrow! =)");
+	    }
+
+	    // check the time field for proper syntax
+	    String time = firstRec.get(5);
+
+	    // if the time markings aren't in proper syntax and range ...
+	    if (!(Integer.parseInt(time.substring(0,2))<24 &&
+	            Integer.parseInt(time.substring(3,5))<60 &&
+	            Integer.parseInt(time.substring(6))<60))
+	    {
+
+	    //  give a [funny ;} ] warning
+	        System.out.println("Warning: given time is not in proper syntax or range: hh:mm:ss where hh == hours, mm == minutes, and ss == seconds."
+	                + "\nRecommended action: check syntax, or buy your assembler a watch! =P");
+	    }
+
+	    // iteration to go through each next line to validate the object file
+	    for(int i = 1;i < objectArray.size();i++)
+	    {
+
+	    // create arraylist that holds the next record of the object file
+	    ArrayList<String> nextRec = new ArrayList<String>(objectArray.get(i));
+
+	    // distinguish the type of record by the letter of the first field
+	    char recType = nextRec.get(0).charAt(0);
+
+	        if(recType == 'L')
+	        {
+
+	        // validate the linking record
+	        }
+
+	        else if(recType == 'T')
+	        {
+
+	        // validate the text record
+	        }
+
+	        else if(recType == 'E')
+	        {
+
+	        // validate the end record
+	        }
+
+	        else
+	        {
+
+	        // invalid record
+	        }
+	    }
+	    // if the validation has not aborted by this point, the object file is good enough to link
+	    // therefore the method will return true if it makes it to this point
+	    return true;
+	    /**
+	        for a header record:
+
+
+	        -check syntax of each part of the record
+	                ==> for unallowed syntax, several errors to break it down
+	            - decrement textRecs and linkRecs each time one of the corresponding text/linking records are found
+	            - if either get to zero: 
+	                -throw an error [naming convention for error ???]
+	                - ?? skip rest of corresponding files ??
+
+	        ----> what else for header records ?? ???
+	    */
+	    //check the rest of the records  have valid labels and sizes
+
 		//-----------------------------_______________ START OF KASHFLOW EDIT _______________-----------------------------//
 	     /*
 	        My sub-skeleton starts here. When reading through, the lines and blocks with two question marks [??]
@@ -232,8 +460,6 @@ public class Linker {
 	    //-----------------------------_______________ END OF KASHFLOW EDIT _______________-----------------------------//
 
 
-		
-		return false;
 	}
 
 	/**This method takes an ObjectIn object file and output the correct parts to the linker
