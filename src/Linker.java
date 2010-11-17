@@ -142,6 +142,12 @@ public class Linker {
 	    // is being validated anyways
 	    int recordNum = 1;
 
+	    // create arraylist that holds the first record of the object file
+	    ArrayList<String> firstRec = new ArrayList<String>(objectArray.get(0));
+	    
+	    // holds value of the first character in what should be the header record
+	    char head = firstRec.get(0).charAt(0);
+	    
 	    // the program name to be stored; should be consistent throughout the object file
 	    //[linker-adjusted loading address to use for overall linking file address]
 	    String linkLoadAddr = firstRec.get(3);
@@ -154,11 +160,9 @@ public class Linker {
 
 	    //check for header
 
-	    // create arraylist that holds the first record of the object file
-	    ArrayList<String> firstRec = new ArrayList<String>(objectArray.get(0));
+	    
 
-	    // holds value of the first character in what should be the header record
-	    char head = firstRec.get(0).charAt(0);
+	   
 
 	    /*
 	     if the first character isn't an 'H' or 'h', or if the length of the header file then
