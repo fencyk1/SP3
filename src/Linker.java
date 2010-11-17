@@ -13,8 +13,10 @@ public class Linker {
 	static ObjectInInterface object5 = new ObjectIn();
 	
 	//object to hold the different objectArrays
-	static ArrayList<ArrayList<ArrayList<String>>> objectArrays = new ArrayList<ArrayList<ArrayList<String>>>(5);
+	static private ArrayList<ArrayList<ArrayList<String>>> objectArrays = new ArrayList<ArrayList<ArrayList<String>>>(5);
 
+	//linker error output
+	File LinkerUserReport = new File("LinkerUserReport.txt");
 	
 	
 	/**
@@ -95,6 +97,7 @@ public class Linker {
 		}
 		
 		//populate symbol table
+		System.out.println(">>>>>>>> Popluating Symbol Table <<<<<<<<");
 		populateSymbolTable(GST);
 		
 		
@@ -105,18 +108,29 @@ public class Linker {
 		
 		
 		//create linker file
+		System.out.println(">>>>>>>> Building Linker Load Module <<<<<<<<");
 		
-		// iteration:
-		// if objectX [0<X<2] is not empty, call the buildLinkerFile method on it
-				// transfer text records into linker file and adjust as needed
-		/* --> check that whatever is external in one place is internal in another
-					- if not internal elsewhere, throw error and *abort* 
-						[will likely create issues elsewhere in code]
-					- "external label is not defined internally anywhere"
-		  <--
-		*/
-		// else: just skip to the next until no other objectIn's need be 'linked'
+		
+			//create file itself
+		File linkerFile = new File("LoadModule.ld");
+		
+		//create printWriter for linkerFile
+		PrintWriter out = new PrintWriter (new BufferedWriter(new FileWriter(linkerFile)));
+		
+			//create header record
+		
+		
+			//create text records
+		int textRecordCount = buildLinkerFile(out, GST);
+		
+			//create end record
+		
+		
 				
+		
+		//finish
+		out.close();
+		System.out.println(">>>>>>>> Linking Complete <<<<<<<<");
 		
 
 	}
@@ -786,18 +800,17 @@ public class Linker {
 	 * @param objectfile = the ObjectIn containing the object file to be converted
 	 * @throws IOException 
 	 */
-	static void buildLinkerFile(File linkerFile, LinkerTableInterface symbolTable, String[] fileNames) throws IOException
+	static int buildLinkerFile(PrintWriter out, LinkerTableInterface symbolTablet ) throws IOException
 	{
-		//TODO: finish cases : loadAddress : initial startLocation
+		//TODO: finish E case
 		
 		//variables for main scope		
+		int recordCount = 0;
 		int startLocation = 0; //holds start location of program
 		Integer loadAddress = 0; //holds the current address to load at
 		int diffOfLoc = 0; //holds the difference between assembler assigned start and linker assigned
 		ConverterInterface converter = new Converter();
 		
-		//create printWriter for linkerFile
-		PrintWriter out = new PrintWriter (new BufferedWriter(new FileWriter(linkerFile)));
 
 		
 		//set startLocation from current objects header 
@@ -855,9 +868,9 @@ public class Linker {
 					loadAddress += diffOfLoc;
 					
 					//add to linkerfile here
-					out.println("LT|" + loadAddress.toString() + "|" + code + "|" + fileNames[i]);
+					out.println("LT|" + loadAddress.toString() + "|" + code + "|" + objectArrays.get(i).get(0).get(1));
 					
-					
+					recordCount++;
 					
 
 				}
@@ -874,6 +887,9 @@ public class Linker {
 			
 			
 		}
+		
+		//return total number of records
+		return recordCount;
 		
 		
 		
