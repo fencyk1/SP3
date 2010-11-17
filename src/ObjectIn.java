@@ -26,9 +26,10 @@ public class ObjectIn implements ObjectInInterface{
 		//take a line from the input object and tokenize it and insert it into the sourceArray
 		while ((line = input.readLine()) != null)
 		{
-			
+			/**
 			//print line being read
 			System.out.println(line);
+			**/
 			
 			//create tokenizer object
 			LinkerTokenizerInterface tokenizer = new LinkerTokenizer();

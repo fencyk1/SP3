@@ -1,5 +1,8 @@
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Linker {
@@ -478,41 +481,95 @@ public class Linker {
 	 * @param linkerFile = the file to output to
 	 * @param symbolTable = the object containing the linker's global symbol table
 	 * @param objectfile = the ObjectIn containing the object file to be converted
+	 * @throws IOException 
 	 */
-	static void buildLinkerFile(File linkerFile, LinkerTableInterface symbolTable)
+	static void buildLinkerFile(File linkerFile, LinkerTableInterface symbolTable, String[] fileNames) throws IOException
 	{
-		//TODO: finish cases
+		//TODO: finish cases : loadAddress : initial startLocation
 		
+		//variables for main scope		
+		int startLocation = 0; //holds start location of program
+		Integer loadAddress = 0; //holds the current address to load at
+		int diffOfLoc = 0; //holds the difference between assembler assigned start and linker assigned
+		ConverterInterface converter = new Converter();
 		
-		
-		for (int i = 0; i < objectArrays.size(); i++) {
-			//increment through object array and convert text records to linker records
-			for (int inc = 0; inc < objectArrays.get(i).size(); inc++) {
+		//create printWriter for linkerFile
+		PrintWriter out = new PrintWriter (new BufferedWriter(new FileWriter(linkerFile)));
 
-				if (objectArrays.get(i).get(inc).get(0).equalsIgnoreCase("T")) {
+		
+		//set startLocation from current objects header 
+		startLocation += Integer.parseInt(converter.hexToDec(objectArrays.get(0).get(0).get(3)));
+		
+		//increment through object arrays
+		for (int i = 0; i < objectArrays.size(); i++)
+		{
+			
+			//set diffOfLoc for program 
+			//diffOfLoc equals startLocation minus prog load address
+			if (objectArrays.get(i).size() > 0)
+			{
+				diffOfLoc = startLocation
+						- Integer.parseInt(converter.hexToDec(objectArrays
+								.get(i).get(0).get(3)));
+			}
+			
+			
+			//increment through object array and convert text records to linker records
+			for (int inc = 0; inc < objectArrays.get(i).size(); inc++)
+			{
+
+				if (objectArrays.get(i).get(inc).get(0).equalsIgnoreCase("T"))
+				{
 
 					//store hex code as string
 					String code = objectArrays.get(i).get(inc).get(3);
+					int intCode = Integer.parseInt(converter.hexToDec(code));
 
 					//mod code if it is R+ , R- , or E type
 					//if R+ type add startLocation to address section of code
-					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R+")) {
-
+					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R+"))
+					{
+						intCode += startLocation;
 					}
 
-					//if R- type subtract startLocation to address section of code
-					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R-")) {
-
+					//if R- type subtract startLocation from address section of code
+					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R-"))
+					{
+						intCode -= startLocation;
 					}
 
 					//if E type 
-					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("E")) {
-
+					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("E"))
+					{
+						
 					}
+					
+					
+					//get loadAddress
+					loadAddress = Integer.parseInt(converter.hexToDec(objectArrays.get(i).get(inc).get(1)));
+					
+					//modify loadAddress
+					loadAddress += diffOfLoc;
+					
+					//add to linkerfile here
+					out.println("LT|" + loadAddress.toString() + "|" + code + "|" + fileNames[i]);
+					
+					
+					
 
 				}
+				
 
 			}
+			
+			
+			//set startLocation to end of this program
+			if (objectArrays.get(i).size() > 0)
+			{
+				startLocation += Integer.parseInt(converter.hexToDec(objectArrays.get(i).get(0).get(2)));
+			}
+			
+			
 		}
 		
 		
