@@ -8,6 +8,9 @@ public class Linker {
 	static ObjectInInterface object3 = new ObjectIn();
 	static ObjectInInterface object4 = new ObjectIn();
 	static ObjectInInterface object5 = new ObjectIn();
+	
+	//object to hold the different objectArrays
+	static ArrayList<ArrayList<ArrayList<String>>> objectArrays = new ArrayList<ArrayList<ArrayList<String>>>(5);
 
 	
 	
@@ -49,25 +52,31 @@ public class Linker {
 			{
 				
 				//store in appropriate ObjectIn global var
+				//store in objectArrays
 				if(inc == 0)
 				{
 					object1 = objectFile;
+					objectArrays.set(inc, objectArray);
 				}
 				else if(inc == 1)
 				{
 					object2 = objectFile;
+					objectArrays.set(inc, objectArray);
 				}
 				else if(inc == 2)
 				{
 					object3 = objectFile;
+					objectArrays.set(inc, objectArray);
 				}
 				else if(inc == 3)
 				{
 					object4 = objectFile;
+					objectArrays.set(inc, objectArray);
 				}
 				else if(inc == 4)
 				{
 					object5 = objectFile;
+					objectArrays.set(inc, objectArray);
 				}
 				
 			}
@@ -77,10 +86,7 @@ public class Linker {
 			{
 				
 			}
-			
-			
-		
-			
+					
 			
 		//end for loop for multiple files
 		}
@@ -473,54 +479,44 @@ public class Linker {
 	 * @param symbolTable = the object containing the linker's global symbol table
 	 * @param objectfile = the ObjectIn containing the object file to be converted
 	 */
-	static void buildLinkerFile(File linkerFile, LinkerTableInterface symbolTable, ObjectInInterface objectfile)
+	static void buildLinkerFile(File linkerFile, LinkerTableInterface symbolTable)
 	{
 		//TODO: finish cases
 		
 		
-		/**
-		//increment through object array and convert text records to linker records
-		for(int inc = 0; inc < objectArray.size(); inc++)
-		{
-			
-			
-			
-			if (objectArray.get(inc).get(0).equalsIgnoreCase("T"))
-			{
-				
-				//store hex code as string
-				String code = objectArray.get(inc).get(3);
-				
-				//mod code if it is R+ , R- , or E type
-				//if R+ type add startLocation to address section of code
-				if (objectArray.get(inc).get(5).equalsIgnoreCase("R+"))
-				{
-					
+		
+		for (int i = 0; i < objectArrays.size(); i++) {
+			//increment through object array and convert text records to linker records
+			for (int inc = 0; inc < objectArrays.get(i).size(); inc++) {
+
+				if (objectArrays.get(i).get(inc).get(0).equalsIgnoreCase("T")) {
+
+					//store hex code as string
+					String code = objectArrays.get(i).get(inc).get(3);
+
+					//mod code if it is R+ , R- , or E type
+					//if R+ type add startLocation to address section of code
+					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R+")) {
+
+					}
+
+					//if R- type subtract startLocation to address section of code
+					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R-")) {
+
+					}
+
+					//if E type 
+					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("E")) {
+
+					}
+
 				}
-				
-				//if R- type subtract startLocation to address section of code
-				if (objectArray.get(inc).get(5).equalsIgnoreCase("R-"))
-				{
-					
-				}
-				
-				//if E type 
-				if (objectArray.get(inc).get(5).equalsIgnoreCase("E"))
-				{
-					
-				}
-				
-				
-				
-				
+
 			}
-			
-			
-			
 		}
 		
 		
-		**/
+		
 		
 	}
 
@@ -543,270 +539,59 @@ public class Linker {
 		int diffOfLoc = 0; 
 		
 		
-		//create objectArrays
-		ArrayList<ArrayList<String>> object1Array = object1.outputObjectArray();
-		ArrayList<ArrayList<String>> object2Array = object2.outputObjectArray();
-		ArrayList<ArrayList<String>> object3Array = object3.outputObjectArray();
-		ArrayList<ArrayList<String>> object4Array = object4.outputObjectArray();
-		ArrayList<ArrayList<String>> object5Array = object5.outputObjectArray();
 		
 		
 		
-		//populate from object1
 		
-		//get start location
-		startLocation = Integer.parseInt(converter.hexToDec(object1Array.get(0).get(4)));
+		//populate from objects
 		
-		//check startLocation does not exceed length
-		if(startLocation >= 65536)
-		{
-			//print error message and return false
-			System.out.println("Length of linked programs exceeds memory.");
-			return false;
-		}
-		
-		if (object1Array.size() > 0)
-		{
-			//populate from object 1
-			//set diffOfLoc for program 1
-			//diffOfLoc equals startLocation minus prog load address
-			diffOfLoc = startLocation
-					- Integer.parseInt(converter.hexToDec(object1Array.get(0)
-							.get(3)));
-			//increment through object1Array and find the linker files
-			for (int inc = 0; inc < object1Array.size(); inc++) {
-
-				//check record type. If 'L' continue
-				if (object1Array.get(inc).get(0).equals("L")) {
-
-					//get name
-					String name = object1Array.get(inc).get(1);
-
-					//get type
-					String type = object1Array.get(inc).get(3);
-
-					//get location
-					int location = Integer.parseInt(converter
-							.hexToDec(object1Array.get(inc).get(2)));
-
-					//modify location due to load address differences
-					location += diffOfLoc;
-
-					//add to symbol table
-					symbolTable.add(name, type, location);
-				}
-
+		for (int i = 0; i < objectArrays.size(); i++) {
+			//get start location
+			startLocation = Integer.parseInt(converter.hexToDec(objectArrays.get(i)
+					.get(0).get(4)));
+			//check startLocation does not exceed length
+			if (startLocation >= 65536) {
+				//print error message and return false
+				System.out.println("Length of linked programs exceeds memory.");
+				return false;
 			}
-			//modify start location to the beginning of the second program
-			startLocation += Integer.parseInt(converter.hexToDec(object1Array
-					.get(0).get(2)));
-		}
-		
-		
-		
-		//check startLocation does not exceed length
-		if(startLocation >= 65536)
-		{
-			//print error message and return false
-			System.out.println("Length of linked programs exceeds memory.");
-			return false;
-		}
-		
-		
-		//populate from object 2
-		if (object2Array.size() > 0)
-		{
-			//set diffOfLoc for program 2
-			//diffOfLoc equals startLocation minus prog load address
-			diffOfLoc = startLocation
-					- Integer.parseInt(converter.hexToDec(object2Array.get(0)
-							.get(3)));
-			//populate from object2
-			//increment through object1Array and find the linker files
-			for (int inc = 0; inc < object2Array.size(); inc++) {
+			if (objectArrays.get(i).size() > 0) {
+				//populate from object 
+				//set diffOfLoc for program 
+				//diffOfLoc equals startLocation minus prog load address
+				diffOfLoc = startLocation
+						- Integer.parseInt(converter.hexToDec(objectArrays.get(i).get(
+								0).get(3)));
+				//increment through object1Array and find the linker files
+				for (int inc = 0; inc < objectArrays.get(i).size(); inc++) {
 
-				//check record type. If 'L' continue
-				if (object2Array.get(inc).get(0).equals("L")) {
+					//check record type. If 'L' continue
+					if (objectArrays.get(i).get(inc).get(0).equals("L")) {
 
-					//get name
-					String name = object2Array.get(inc).get(1);
+						//get name
+						String name = objectArrays.get(i).get(inc).get(1);
 
-					//get type
-					String type = object2Array.get(inc).get(3);
+						//get type
+						String type = objectArrays.get(i).get(inc).get(3);
 
-					//get location
-					int location = Integer.parseInt(converter
-							.hexToDec(object2Array.get(inc).get(2)));
+						//get location
+						int location = Integer.parseInt(converter
+								.hexToDec(objectArrays.get(i).get(inc).get(2)));
 
-					//modify location due to load address differences
-					location += diffOfLoc;
+						//modify location due to load address differences
+						location += diffOfLoc;
 
-					//add to symbol table
-					symbolTable.add(name, type, location);
+						//add to symbol table
+						symbolTable.add(name, type, location);
+					}
+
 				}
-
+				//modify start location to the beginning of the second program
+				startLocation += Integer.parseInt(converter
+						.hexToDec(objectArrays.get(i).get(0).get(2)));
 			}
-			//modify start location to the beginning of the third program
-			startLocation += Integer.parseInt(converter.hexToDec(object2Array
-					.get(0).get(2)));
 		}
 		
-		
-		
-		//check startLocation does not exceed length
-		if(startLocation >= 65536)
-		{
-			//print error message and return false
-			System.out.println("Length of linked programs exceeds memory.");
-			return false;
-		}
-		
-		
-		//populate from object 3
-		if (object3Array.size() > 0)
-		{
-			//set diffOfLoc for program 3
-			//diffOfLoc equals startLocation minus prog load address
-			diffOfLoc = startLocation
-					- Integer.parseInt(converter.hexToDec(object3Array.get(0)
-							.get(3)));
-			//populate from object3
-			//increment through object1Array and find the linker files
-			for (int inc = 0; inc < object3Array.size(); inc++) {
-
-				//check record type. If 'L' continue
-				if (object3Array.get(inc).get(0).equals("L")) {
-
-					//get name
-					String name = object3Array.get(inc).get(1);
-
-					//get type
-					String type = object3Array.get(inc).get(3);
-
-					//get location
-					int location = Integer.parseInt(converter
-							.hexToDec(object3Array.get(inc).get(2)));
-
-					//modify location due to load address differences
-					location += diffOfLoc;
-
-					//add to symbol table
-					symbolTable.add(name, type, location);
-				}
-
-			}
-			//modify start location to the beginning of the fourth program
-			startLocation += Integer.parseInt(converter.hexToDec(object3Array
-					.get(0).get(2)));
-		}
-		
-		
-		
-		//check startLocation does not exceed length
-		if(startLocation >= 65536)
-		{
-			//print error message and return false
-			System.out.println("Length of linked programs exceeds memory.");
-			return false;
-		}
-		
-		
-		//polulate from object 4
-		if (object4Array.size() > 0)
-		{
-			//set diffOfLoc for program 4
-			//diffOfLoc equals startLocation minus prog load address
-			diffOfLoc = startLocation
-					- Integer.parseInt(converter.hexToDec(object4Array.get(0)
-							.get(3)));
-			//populate from object4
-			//increment through object1Array and find the linker files
-			for (int inc = 0; inc < object2Array.size(); inc++) {
-
-				//check record type. If 'L' continue
-				if (object4Array.get(inc).get(0).equals("L")) {
-
-					//get name
-					String name = object4Array.get(inc).get(1);
-
-					//get type
-					String type = object4Array.get(inc).get(3);
-
-					//get location
-					int location = Integer.parseInt(converter
-							.hexToDec(object4Array.get(inc).get(2)));
-
-					//modify location due to load address differences
-					location += diffOfLoc;
-
-					//add to symbol table
-					symbolTable.add(name, type, location);
-				}
-
-			}
-			//modify start location to the beginning of the fifth program
-			startLocation += Integer.parseInt(converter.hexToDec(object4Array
-					.get(0).get(2)));
-		}
-		
-		
-		//check startLocation does not exceed length
-		if(startLocation >= 65536)
-		{
-			//print error message and return false
-			System.out.println("Length of linked programs exceeds memory.");
-			return false;
-		}
-		
-		
-		
-		//polulate from object 5
-		if (object5Array.size() > 0)
-		{
-			//set diffOfLoc for program 5
-			//diffOfLoc equals startLocation minus prog load address
-			diffOfLoc = startLocation
-					- Integer.parseInt(converter.hexToDec(object5Array.get(0)
-							.get(3)));
-			//populate from object2
-			//increment through object1Array and find the linker files
-			for (int inc = 0; inc < object5Array.size(); inc++) {
-
-				//check record type. If 'L' continue
-				if (object5Array.get(inc).get(0).equals("L")) {
-
-					//get name
-					String name = object5Array.get(inc).get(1);
-
-					//get type
-					String type = object5Array.get(inc).get(3);
-
-					//get location
-					int location = Integer.parseInt(converter
-							.hexToDec(object5Array.get(inc).get(2)));
-
-					//modify location due to load address differences
-					location += diffOfLoc;
-
-					//add to symbol table
-					symbolTable.add(name, type, location);
-				}
-
-			}
-			
-			//modify start location to the end of the fifth program
-			startLocation += Integer.parseInt(converter.hexToDec(object5Array
-					.get(0).get(2)));
-		}
-		
-		
-		//check startLocation does not exceed length
-		if(startLocation >= 65536)
-		{
-			//print error message and return false
-			System.out.println("Length of linked programs exceeds memory.");
-			return false;
-		}
 		
 		
 		//if successful return true
