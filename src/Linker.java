@@ -144,13 +144,13 @@ public class Linker {
 
 	    // the program name to be stored; should be consistent throughout the object file
 	    //[linker-adjusted loading address to use for overall linking file address]
-	    String linkLoadAddr = null;
+	    String linkLoadAddr = firstRec.get(3);
 
 	    // [execution start address for program]
-	    String execStartAddr = null;
-
+	    String execStartAddr = firstRec.get(8);
+	    
 	     //[program length]
-	    String pgmLen = null;
+	    String pgmLen = firstRec.get(2);
 
 	    //check for header
 
@@ -471,7 +471,53 @@ public class Linker {
 	 */
 	static void buildLinkerFile(File linkerFile, LinkerTableInterface symbolTable, ObjectInInterface objectfile)
 	{
-		//TODO: everything
+		//TODO: finish cases
+		
+		
+		/**
+		//increment through object array and convert text records to linker records
+		for(int inc = 0; inc < objectArray.size(); inc++)
+		{
+			
+			
+			
+			if (objectArray.get(inc).get(0).equalsIgnoreCase("T"))
+			{
+				
+				//store hex code as string
+				String code = objectArray.get(inc).get(3);
+				
+				//mod code if it is R+ , R- , or E type
+				//if R+ type add startLocation to address section of code
+				if (objectArray.get(inc).get(5).equalsIgnoreCase("R+"))
+				{
+					
+				}
+				
+				//if R- type subtract startLocation to address section of code
+				if (objectArray.get(inc).get(5).equalsIgnoreCase("R-"))
+				{
+					
+				}
+				
+				//if E type 
+				if (objectArray.get(inc).get(5).equalsIgnoreCase("E"))
+				{
+					
+				}
+				
+				
+				
+				
+			}
+			
+			
+			
+		}
+		
+		
+		**/
+		
 	}
 
 	/**This method takes an ObjectIn and and gets the linker records and inputs the needed
