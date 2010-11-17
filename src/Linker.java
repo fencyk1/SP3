@@ -3,7 +3,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Linker {
 	static ObjectInInterface object1 = new ObjectIn();
@@ -29,6 +32,8 @@ public class Linker {
 		ArrayList<ArrayList<String>> objectArray;
 		boolean validObject = true;
 		LinkerTableInterface GST = new LinkerTable();
+		Integer moduleLength = 0;
+		ConverterInterface converter = new Converter();
 		
 		
 
@@ -101,7 +106,7 @@ public class Linker {
 		
 		//populate symbol table
 		System.out.println(">>>>>>>> Popluating Symbol Table <<<<<<<<");
-		populateSymbolTable(GST);
+		populateSymbolTable(GST, moduleLength);
 		
 		
 		
@@ -120,16 +125,50 @@ public class Linker {
 		//create printWriter for linkerFile
 		PrintWriter out = new PrintWriter (new BufferedWriter(new FileWriter(linkerFile)));
 		
-			//create header record
+		//Set up the date and time for printing.		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd|HH:mm:ss");
+        Date date = new Date();
+        
+        //convert moduleLength to a string and format it
+        String moduleLen = converter.decimalToHex(moduleLength.toString());
+        while(moduleLen.length() < 4)
+        {
+        	moduleLen = "0" + moduleLen;
+        }
+		
+		//create header record
+		//print "LH|" execStartAddress "|"
+		out.print("LH|" + objectArrays.get(0).get(0).get(8) + "|");
+		//print moduleName "|"
+		out.print(objectArrays.get(0).get(0).get(1) + "|");
+		//print moduleLength in hex followed by a "\"
+		out.print(moduleLen + "|");
+		//print load address followed by "|"
+		out.print(objectArrays.get(0).get(0).get(3) + "|");
+		//print date "|" time "|SAL-LINK|
+		out.print(dateFormat.format(date) + "|SAL-LINK|");
+		//print version# "|" 
+		out.print(objectArrays.get(0).get(0).get(10) + "|");
+		//print revision# "|" 
+		out.print(objectArrays.get(0).get(0).get(11) + "|");
+		//print module name
+		out.println(objectArrays.get(0).get(0).get(1));
+		
 		
 		
 			//create text records
 		int textRecordCount = buildLinkerFile(out, GST);
 		
+		//create variable to hold total number of records. It is equal to textRecordCOunt + 2
+		Integer recordCount = textRecordCount + 2;
+		
+		
 			//create end record
+		//print "LE|" total records "|"
+		out.print("LE|" + recordCount + "|");
+		//print module name
+		out.println(objectArrays.get(0).get(0).get(1));		
 		
-		
-				
 		
 		//finish
 		out.close();
@@ -802,11 +841,11 @@ public class Linker {
 	 * @param linkerFile = the file to output to
 	 * @param symbolTable = the object containing the linker's global symbol table
 	 * @param objectfile = the ObjectIn containing the object file to be converted
+	 * @returns int record count
 	 * @throws IOException 
 	 */
 	static int buildLinkerFile(PrintWriter out, LinkerTableInterface symbolTable ) throws IOException
 	{
-		//TODO: finish E case
 		
 		//variables for main scope		
 		int recordCount = 0;
@@ -940,8 +979,9 @@ public class Linker {
 	 * 
 	 * @param symbolTable
 	 * @param objectFile
+	 * @returns boolean true if successful, false if length exceeds memory
 	 */
-	static boolean populateSymbolTable(LinkerTableInterface symbolTable)
+	static boolean populateSymbolTable(LinkerTableInterface symbolTable, int moduleLength)
 	{
 		
 		//create converter class
@@ -1003,6 +1043,10 @@ public class Linker {
 				}
 				//modify start location to the beginning of the second program
 				startLocation += Integer.parseInt(converter
+						.hexToDec(objectArrays.get(i).get(0).get(2)));
+				
+				//add program length to module length
+				moduleLength += Integer.parseInt(converter
 						.hexToDec(objectArrays.get(i).get(0).get(2)));
 			}
 		}
