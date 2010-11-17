@@ -889,17 +889,24 @@ public class Linker {
 					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R"))
 					{
 						
-						//if R- type subtract startLocation from address section of code
-						if (objectArrays.get(i).get(inc).get(6).equalsIgnoreCase("-"))
-						{
-							intCode -= startLocation;
-						}
+						int j = 5;
 						
-						//if R+ type add startLocation to address section of code
-						else if (objectArrays.get(i).get(inc).get(6).equalsIgnoreCase("-"))
-						{
-							intCode += startLocation;
-						}
+						while (objectArrays.get(i).get(inc).get(j).equalsIgnoreCase("R")) {
+						
+							//if R- type subtract startLocation from address section of code
+							if (objectArrays.get(i).get(inc).get(j + 1).equalsIgnoreCase("-"))
+							{
+								intCode -= startLocation;
+							}
+						
+							//if R+ type add startLocation to address section of code
+							else if (objectArrays.get(i).get(inc).get(j + 1).equalsIgnoreCase("-"))
+							{
+								intCode += startLocation;
+							}
+							
+							//increment j by 2
+							j += 2;
 						
 					}
 
