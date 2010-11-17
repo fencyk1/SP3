@@ -365,4 +365,50 @@ public class Converter implements ConverterInterface{
 		
 		return decimal;
 	}
+	
+	@Override
+	public boolean isValidHex(String str) {
+
+	    // iteratively check each character in the string to see if it is a valid hex character
+	    for(int i = 0; i<str.length(); i++)
+	    {
+
+	        // ch will be immutable character in order to be able to use the .equals function
+	        Character ch = str.charAt(i);
+
+	        // if ch happens to be not equal to any hex character ...
+	        if(!(ch.equals('1') ||
+	             ch.equals('2') || 
+	             ch.equals('3') || 
+	             ch.equals('4') || 
+	             ch.equals('5') || 
+	             ch.equals('6') || 
+	             ch.equals('7') || 
+	             ch.equals('8') || 
+	             ch.equals('9') || 
+	             ch.equals('0') || 
+	             ch.equals('A') || 
+	             ch.equals('B') || 
+	             ch.equals('C') || 
+	             ch.equals('D') || 
+	             ch.equals('E') || 
+	             ch.equals('F') ||
+	             ch.equals('a') ||
+	             ch.equals('b') ||
+	             ch.equals('c') ||
+	             ch.equals('d') ||
+	             ch.equals('e') ||
+	             ch.equals('f') ))
+	        {
+
+	            // ... then the string is not a valid hex string
+	            return false;
+	        }
+
+	        // go back through the loop and check the next character if applicable
+	    }
+
+	    // if there are no invalid hex characters detected, then the string is a valid hex string
+	    return true;
+	}
 }

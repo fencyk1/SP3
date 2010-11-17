@@ -70,5 +70,12 @@ public interface ConverterInterface {
 	 */
 	String hexToDec(String hex);
 	
-	
+	/**
+	 * Validates whether or not a given string is a valid hex string.
+	 * 
+	 * @param str string to be checked for valid hex
+	 * @return isHex boolean value to be returned after validation
+	 */
+
+	boolean isValidHex(String str);
 }
