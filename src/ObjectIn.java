@@ -15,7 +15,7 @@ public class ObjectIn implements ObjectInInterface{
 		System.out.println("Importing object file : " + object);
 		
 		//clear the objectArray
-		objectArray.clear();
+		objectArray = new ArrayList<ArrayList<String>>(0);
 		
 		//get object file
 		BufferedReader input = new BufferedReader(new FileReader(object));

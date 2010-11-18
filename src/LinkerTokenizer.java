@@ -22,7 +22,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 		//add the tokens to the array
 		for(int inc =0; inc < tokenCount; inc++)
 		{
-			pipeArray.add(inc, bySpace.nextToken());
+			spaceArray.add(bySpace.nextToken());
 		}
 	}
 
@@ -44,7 +44,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 		//add the tokens to the array
 		for(int inc =0; inc < tokenCount; inc++)
 		{
-			pipeArray.add(inc, byPipe.nextToken());
+			pipeArray.add(byPipe.nextToken());
 		}
 		
 
@@ -65,7 +65,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 		//tokenize by space
 		for(int inc = 0; inc < pipeArray.size(); inc++)
 		{
-			
+			/**
 			//create temp string
 			String temp;
 			
@@ -78,9 +78,11 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 			//add tokens to retArray
 			for(int inc2 = 0; inc2 < spaceArray.size(); inc++)
 			{
-				retArray.add(spaceArray.get(inc2));	
+				retArray.add(inc2, spaceArray.get(inc2));	
 			}
+			**/
 			
+			retArray.add(inc, pipeArray.get(inc));
 			
 		}
 		
