@@ -104,7 +104,7 @@ public class Linker {
 		
 		//populate symbol table
 		System.out.println(">>>>>>>> Popluating Symbol Table <<<<<<<<");
-		populateSymbolTable(GST, moduleLength);
+		populateSymbolTable(GST);
 		
 		
 		
@@ -126,6 +126,9 @@ public class Linker {
 		//Set up the date and time for printing.		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd|HH:mm:ss");
         Date date = new Date();
+        
+        //set module length
+        moduleLength = GST.getLength();
         
         //convert moduleLength to a string and format it
         String moduleLen = converter.decimalToHex(moduleLength.toString());
@@ -158,7 +161,14 @@ public class Linker {
 		int textRecordCount = buildLinkerFile(out, GST);
 		
 		//create variable to hold total number of records. It is equal to textRecordCOunt + 2
-		Integer recordCount = textRecordCount + 2;
+		String recordCount = Integer.toString(textRecordCount + 2);
+		
+		//format recordCount
+		recordCount = converter.decimalToHex(recordCount);
+		while(recordCount.length() < 4)
+		{
+			recordCount = "0" + recordCount;
+		}
 		
 		
 			//create end record
@@ -226,6 +236,13 @@ public class Linker {
 	    }
 	    System.out.println(firstRec.get(firstRec.size() - 1));
 
+        // output record to user report file
+        for (int j = 0; j < firstRec.size() - 1; j++) {
+            out.print(firstRec.get(j));
+            out.print("|");
+        }
+        out.println(firstRec.get(firstRec.size() - 1));
+        
 	    // the program name to be stored; should be consistent throughout the
 	    // object file
 	    // [linker-adjusted loading address to use for overall linking file
@@ -382,7 +399,7 @@ public class Linker {
 	                objectArray.get(i));
 
 	        // output intermediate message for testing / validation reasons
-	        System.out.println("Now validating record:");
+	        System.out.print("Now validating record:");
 
 	        for (int j = 0; j < nextRec.size() - 1; j++) {
 	            System.out.print(nextRec.get(j));
@@ -390,6 +407,13 @@ public class Linker {
 	        }
 	        System.out.println(nextRec.get(nextRec.size() - 1));
 
+	        // output record to user report file
+	        for (int j = 0; j < nextRec.size() - 1; j++) {
+	            out.print(nextRec.get(j));
+	            out.print("|");
+	        }
+	        out.println(nextRec.get(nextRec.size() - 1));
+	        
 	        // distinguish the type of record by the letter of the first field
 	        Character recType = nextRec.get(0).charAt(0);
 
@@ -466,7 +490,7 @@ public class Linker {
 
 	            // if the program name in the linking record doesn't match the
 	            // given program name in the header record ...
-	            if (!(nextRec.get(3).equals(pgmName))) {
+	            if (!(nextRec.get(nextRec.size()-1).equals(pgmName))) {
 
 	                // throw the mismatched program name error and "devalidate"
 	                // the object file
@@ -498,7 +522,7 @@ public class Linker {
 	            // if the number of text records given in the header record is
 	            // exceeded,
 	            // and the error switch is not thrown yet ...
-	            if (linkRecs <= 0 && !(textWrong)) {
+	            if (textRecs <= 0 && !(textWrong)) {
 	                // turn the switch, throw the error, and "devalidate" the
 	                // object file
 	                textWrong = true;
@@ -709,11 +733,12 @@ public class Linker {
 	                        + ": \"total number of records\" field is not in proper syntax");
 	                isValid = false;
 	            }
-
+	            else
+	            {
 	            // create and store value for total number of records for
 	            // validation
 	            int recNum = Integer.parseInt(converter.hexToDec((nextRec.get(1))));
-
+	            
 	            // of the total number of records given by the end record is not
 	            // equal to
 	            // the literal number of records in the entire object file ...
@@ -725,7 +750,7 @@ public class Linker {
 	                        + "not equal to the total number of records in the object file!");
 	                isValid = false;
 	            }
-
+	            }
 	            // if the program name in the end record doesn't match the given
 	            // program name in the header record ...
 	            if (!(nextRec.get(2).equals(pgmName))) {
@@ -920,126 +945,9 @@ public class Linker {
 	    // if the validation has not aborted by this point, the object file is
 	    // good enough to link
 	    // therefore the method will return true if it makes it to this point
+	    
+	    System.out.println("Object file validation complete");
 	    return isValid;
-	    /**
-	     * for a header record:
-	     * 
-	     * 
-	     * -check syntax of each part of the record ==> for unallowed syntax,
-	     * several errors to break it down - decrement textRecs and linkRecs
-	     * each time one of the corresponding text/linking records are found -
-	     * if either get to zero: -throw an error [naming convention for error
-	     * ???]
-	     */
-	    // check the rest of the records have valid labels and sizes
-
-		//-----------------------------_______________ START OF KASHFLOW EDIT _______________-----------------------------//
-	     /*
-	        My sub-skeleton starts here. When reading through, the lines and blocks with two question marks [??]
-	        are questions I have for the graders, and the lines and blocks with three question marks [???] are
-	        questions I have for you in terms of designing and coding conventions / preferences.
-	     */
-
-	    /*  
-	        Four cases for going through lines: header rec, linking rec, text rec, end rec:
-	        Check first line; should be header record. If not, throw 'no/missing header record' error and abort
-	            -boolean hasHeader to check ???
-	    */
-
-	    /*
-	        for a header record:
-
-	        -should come immediately following an end record; if not, throw a 'no/missing end record' error and abort
-	            -boolean hasEnded to check?
-
-	        -check syntax of each part of the record
-	                ==> one overall error for unallowed syntax or several to break it down ??
-	                ==> call method boolean isValidHeaderRecord ???
-	        -ensure program length, assembler assigned program load address, and Execution start address for this module
-	         are all == four hex digits
-	            -also check for validity of address bounds; if violated give 'address out of bounds' error [abort?]
-
-	        -if no link-stopping errors abound:
-	            - create variables :
-	                -set boolean hasEnded to false
-	                -textRecs [number of text records] 
-	                -linkRecs [number of linking records]
-	                -linkLoadAddr [linker-adjusted loading address to use for overall linking file address]
-	                -??? execStartAddr ??? [execution start address for program]
-	                -pgmLen [program length]
-	                -others???
-
-	            - decrement textRecs and linkRecs each time one of the corresponding text/linking records are found
-	            - if either get to zero: 
-	                -throw an error [naming convention for error ???]
-	                - ?? skip rest of corresponding files ??
-
-	        ----> what else for header records ?? ???
-	    */
-
-
-	    /*
-	        for a linking record:
-
-	        -should come after a header record and before an end record; if not: throw a 
-	         'no/missing end record' error and abort
-	            -boolean hasEnded to check?
-
-	        -check syntax of each part of the record
-	                ==> one overall error for unallowed syntax or several to break it down ??
-	                ==> call method boolean isValidLinkingRecord ???
-	        -ensure entry address == four hex digits
-	            -also check for validity of address bounds; if violated give 'address out of bounds' error [abort?]
-
-	        -if no syntax errors or other issues:
-	            -update global symbol table with newly found symbol
-	            ==>what else for linking records ??
-				
-			
-	    */
-
-	    /*
-	        for a end record:
-
-	        -should come immediately following an end record; if not, throw a 'no/missing end record' error and abort
-	            -boolean hasEnded to check?
-
-	        -check syntax of each part of the record
-	                ==> one overall error for unallowed syntax or several to break it down ??
-	                ==> call method boolean isValidEndRecord ???
-	            ==>check program name with that of the header record???
-
-	        -if no syntax errors or other issues:
-	            -check "total number of records" [imp'd by objectX.size] field with computation [textRecs + linkRecs + 2]
-	                -if not equal, throw error for unequal record number field
-	            -set boolean hasEnded to true
-	            ==>what else for end records ??             
-	    */
-
-	    /*
-	        for a text record: 
-
-	        -should come after a header record and before an end record; if not: throw a 
-	         'no/missing end record' error and abort
-	            -boolean hasEnded to check?
-
-	        -check syntax of each part of the record
-	                ==> one overall error for unallowed syntax or several to break it down ??
-	                ==> call method boolean isValidTextRecord ???
-	        -ensure program length, assembler assigned program load address, and Execution start address for this module
-	         are all == four hex digits
-	            -also check for validity of address bounds; if violated give 'address out of bounds' error [abort?]
-		
-			---> use the .equals function for checking String objects
-			
-			
-			
-	    */
-
-
-	    //-----------------------------_______________ END OF KASHFLOW EDIT _______________-----------------------------//
-
-
 	}
 
 	/**This method takes an ObjectIn object file and output the correct parts to the linker
@@ -1091,67 +999,86 @@ public class Linker {
 					String code = objectArrays.get(i).get(inc).get(3);
 					Integer intCode = Integer.parseInt(converter.hexToDec(code));
 
-					//mod code if it is R, or E type
-					
-					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("R"))
-					{
-						
-						int j = 5;
-						
-						while (objectArrays.get(i).get(inc).get(j).equalsIgnoreCase("R")) {
-						
-							//if R- type subtract startLocation from address section of code
-							if (objectArrays.get(i).get(inc).get(j + 1).equalsIgnoreCase("-"))
-							{
+					// mod code if it is R, or E type
+					int j = 5;
+
+					while (objectArrays.get(i).get(inc).get(j)
+							.equalsIgnoreCase("R")
+							|| objectArrays.get(i).get(inc).get(5)
+									.equalsIgnoreCase("E")) {
+
+						if (objectArrays.get(i).get(inc).get(5)
+								.equalsIgnoreCase("R")) {
+
+							// if R- type subtract startLocation from
+							// address section of code
+							if (objectArrays.get(i).get(inc).get(j + 1)
+									.equalsIgnoreCase("-")) {
 								intCode -= startLocation;
 							}
-						
-							//if R+ type add startLocation to address section of code
-							else if (objectArrays.get(i).get(inc).get(j + 1).equalsIgnoreCase("-"))
-							{
+
+							// if R+ type add startLocation to address
+							// section of code
+							else if (objectArrays.get(i).get(inc).get(j + 1)
+									.equalsIgnoreCase("-")) {
 								intCode += startLocation;
 							}
-							
-							//increment j by 2
+
+							// increment j by 2
 							j += 2;
-						}
-						
-					}
 
-					
-
-					//if E type 
-					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("E"))
-					{
-						
-						int k = 5;
-						
-						while (objectArrays.get(i).get(inc).get(k).equalsIgnoreCase("E")) {
-							
-							
-							//if - subtract address of label from intCode
-							if ( objectArrays.get(i).get(inc).get(k + 1).equalsIgnoreCase("-"))
-							{
-								intCode -= symbolTable.getLocation(objectArrays.get(k).get(inc).get(k + 2));
-							}
-							
-							//if + subtract address of label from intCode
-							else if ( objectArrays.get(i).get(inc).get(k + 1).equalsIgnoreCase("+"))
-							{
-								intCode += symbolTable.getLocation(objectArrays.get(i).get(inc).get(k + 2));
-							}
-							
-							//increment j by 3 to get to next possible 'E'
-							k += 3;
 						}
-						
-						
-						
-						
+
+						// if E type
+						if (objectArrays.get(i).get(inc).get(5)
+								.equalsIgnoreCase("E")) {
+
+							
+							//check if reference variable is defined
+							if (symbolTable.isDefined(objectArrays.get(i)
+									.get(inc).get(j + 2)))
+							{
+								
+								// if - subtract address of label from intCode
+								if (objectArrays.get(i).get(inc).get(j + 1)
+										.equalsIgnoreCase("-")) {
+
+									intCode -= symbolTable
+											.getLocation(objectArrays.get(j)
+													.get(inc).get(j + 2));
+								}
+
+								// if + subtract address of label from intCode
+								else if (objectArrays.get(i).get(inc)
+										.get(j + 1).equalsIgnoreCase("+")) {
+									intCode += symbolTable
+											.getLocation(objectArrays.get(i)
+													.get(inc).get(j + 2));
+								}
+
+								// increment j by 3 to get to next possible 'E'
+								j += 3;
+							}
+
+							//if ext var is not defined, print error to console
+							else {
+								System.out.println("Linking error: " + objectArrays.get(i)
+										.get(inc).get(j + 2) + "does not have an entry point.");
+							}
+
+						}
+
 					}
 					
 					//convert code back to hex
 					code = converter.decimalToHex(intCode.toString());
+					
+					//fill missing leading zeros in code
+					while (code.length() < 8)
+					{
+						code = "0" + code;
+					}
+					
 					
 					//get loadAddress
 					loadAddress = Integer.parseInt(converter.hexToDec(objectArrays.get(i).get(inc).get(1)));
@@ -1203,7 +1130,7 @@ public class Linker {
 	 * @param objectFile
 	 * @returns boolean true if successful, false if length exceeds memory
 	 */
-	static boolean populateSymbolTable(LinkerTableInterface symbolTable, int moduleLength)
+	static boolean populateSymbolTable(LinkerTableInterface symbolTable)
 	{
 		
 		//create converter class
@@ -1256,7 +1183,7 @@ public class Linker {
 								.hexToDec(objectArrays.get(i).get(inc).get(2)));
 
 						//modify location due to load address differences
-						location += diffOfLoc;
+						location = location + diffOfLoc;
 
 						//add to symbol table
 						symbolTable.add(name, type, location);
@@ -1264,12 +1191,12 @@ public class Linker {
 
 				}
 				//modify start location to the beginning of the second program
-				startLocation += Integer.parseInt(converter
+				startLocation = startLocation + Integer.parseInt(converter
 						.hexToDec(objectArrays.get(i).get(0).get(2)));
 				
-				//add program length to module length
-				moduleLength += Integer.parseInt(converter
-						.hexToDec(objectArrays.get(i).get(0).get(2)));
+				//add program length to module length in GST
+				symbolTable.increaseLength(Integer.parseInt(converter
+						.hexToDec(objectArrays.get(i).get(0).get(2))));
 			}
 		}
 		

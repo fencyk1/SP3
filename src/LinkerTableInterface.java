@@ -55,4 +55,17 @@ public interface LinkerTableInterface {
 	 * @throws IOException 
 	 */
 	void printToFile() throws IOException;
+
+	/**This method increases the stored length variable by integer.
+	 * 
+	 * @param integer int to add to length
+	 */
+	void increaseLength(int integer);
+
+	
+	/**This method returns an int representing the stored length
+	 * 
+	 * @return int length
+	 */
+	int getLength();
 }

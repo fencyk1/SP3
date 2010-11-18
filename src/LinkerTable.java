@@ -10,6 +10,7 @@ public class LinkerTable implements LinkerTableInterface {
 	private ArrayList<String> symTable = new ArrayList<String>(0);
 	private ArrayList<String> typeTable = new ArrayList<String>(0);
 	private ArrayList<Integer> locTable = new ArrayList<Integer>(0);
+	private Integer length = 0;
 	
 	@Override
 	public boolean add(String name, String type, int location) {
@@ -126,6 +127,16 @@ public class LinkerTable implements LinkerTableInterface {
 		
 	}
 
+	@Override
+	public void increaseLength(int integer){
+		
+		length = length + integer;
+		
+	}
 	
+	@Override
+	public int getLength(){
+		return length;
+	}
 	
 }
