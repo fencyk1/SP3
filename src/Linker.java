@@ -1159,8 +1159,15 @@ public class Linker {
 					//modify loadAddress
 					loadAddress += diffOfLoc;
 					
+					//format load address
+					String loadAddr = converter.decimalToHex(loadAddress.toString());
+					while(loadAddr.length() < 4)
+					{
+						loadAddr = "0" + loadAddr;
+					}
+					
 					//add to linkerfile here
-					out.println("LT|" + objectArrays.get(i).get(0).get(2) + "|" + loadAddress.toString() + 
+					out.println("LT|" + objectArrays.get(i).get(0).get(2) + "|" + loadAddr + 
 							"|" + code + "|" + objectArrays.get(i).get(0).get(1));
 					
 					recordCount++;
