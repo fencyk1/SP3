@@ -64,33 +64,29 @@ public class Linker {
 			if (validObject)
 			{
 				
-				//store in appropriate ObjectIn global var
-				//store in objectArrays
+				//store in appropriate ObjectIn global var	
 				if(inc == 0)
 				{
 					object1 = objectFile;
-					objectArrays.set(inc, objectArray);
 				}
 				else if(inc == 1)
 				{
 					object2 = objectFile;
-					objectArrays.set(inc, objectArray);
 				}
 				else if(inc == 2)
 				{
 					object3 = objectFile;
-					objectArrays.set(inc, objectArray);
 				}
 				else if(inc == 3)
 				{
 					object4 = objectFile;
-					objectArrays.set(inc, objectArray);
 				}
 				else if(inc == 4)
 				{
 					object5 = objectFile;
-					objectArrays.set(inc, objectArray);
 				}
+				
+				
 				
 			}
 			
@@ -100,6 +96,8 @@ public class Linker {
 				
 			}
 					
+			//store in objectArrays
+			objectArrays.add(inc, objectArray);
 			
 		//end for loop for multiple files
 		}
@@ -186,6 +184,9 @@ public class Linker {
 	static boolean checkObjectValidity(ArrayList<ArrayList<String>> objectArray, PrintWriter out)
 	{
 		
+		//create converter
+		ConverterInterface converter = new Converter();
+		
 		// declaring global variables to use throughout the method
 	    boolean isValid = true;
 
@@ -220,8 +221,8 @@ public class Linker {
 	    System.out.println("Now validating record:");
 
 	    for (int j = 0; j < firstRec.size() - 1; j++) {
-	        System.out.println(firstRec.get(j));
-	        System.out.println("|");
+	        System.out.print(firstRec.get(j));
+	        System.out.print("|");
 	    }
 	    System.out.println(firstRec.get(firstRec.size() - 1));
 
@@ -384,8 +385,8 @@ public class Linker {
 	        System.out.println("Now validating record:");
 
 	        for (int j = 0; j < nextRec.size() - 1; j++) {
-	            System.out.println(nextRec.get(j));
-	            System.out.println("|");
+	            System.out.print(nextRec.get(j));
+	            System.out.print("|");
 	        }
 	        System.out.println(nextRec.get(nextRec.size() - 1));
 
@@ -657,16 +658,16 @@ public class Linker {
 	                // true for next record
 	                isValid = true;
 
-	                nextRec = new ArrayList<String>(6);
+	                ArrayList<String> newRec = new ArrayList<String>(0);
 	                // nop for invalid text record
-	                nextRec.set(0, "T");
-	                nextRec.set(1, textAddress);
-	                nextRec.set(2, debugCode);
-	                nextRec.set(3, "00800000");
-	                nextRec.set(4, "0");
-	                nextRec.set(5, prog);
+	                newRec.add("T");
+	                newRec.add(textAddress);
+	                newRec.add(debugCode);
+	                newRec.add("00800000");
+	                newRec.add("0");
+	                newRec.add(prog);
 
-	                objectArray.set(i, nextRec);
+	                objectArray.set(i, newRec);
 
 	            }
 	        }
@@ -711,7 +712,7 @@ public class Linker {
 
 	            // create and store value for total number of records for
 	            // validation
-	            int recNum = Integer.parseInt(nextRec.get(1));
+	            int recNum = Integer.parseInt(converter.hexToDec((nextRec.get(1))));
 
 	            // of the total number of records given by the end record is not
 	            // equal to
@@ -1217,7 +1218,7 @@ public class Linker {
 		for (int i = 0; i < objectArrays.size(); i++) {
 			//get start location
 			startLocation = Integer.parseInt(converter.hexToDec(objectArrays.get(i)
-					.get(0).get(4)));
+					.get(0).get(3)));
 			//check startLocation does not exceed length
 			if (startLocation >= 65536) {
 				//print error message and return false
