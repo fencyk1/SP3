@@ -4,7 +4,7 @@ import java.util.StringTokenizer;
 
 public class LinkerTokenizer implements LinkerTokenizerInterface {
 	private ArrayList<String> pipeArray;
-	private ArrayList<String> spaceArray;
+	private ArrayList<String> spaceArray = new ArrayList<String>(0);
 
 	@Override
 	public void tokenizeBySpace(String line) {
@@ -17,7 +17,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 		int tokenCount = bySpace.countTokens();
 		
 		//constuct the holding array
-		spaceArray = new ArrayList<String>(tokenCount);
+		//spaceArray ;
 		
 		//add the tokens to the array
 		for(int inc =0; inc < tokenCount; inc++)
@@ -39,7 +39,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 		int tokenCount = byPipe.countTokens();
 		
 		//constuct the holding array
-		pipeArray = new ArrayList<String>(tokenCount);
+		pipeArray = new ArrayList<String>(0);
 		
 		//add the tokens to the array
 		for(int inc =0; inc < tokenCount; inc++)
@@ -65,7 +65,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 		//tokenize by space
 		for(int inc = 0; inc < pipeArray.size(); inc++)
 		{
-			/**
+			
 			//create temp string
 			String temp;
 			
@@ -75,6 +75,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 			//tokenize temp by space
 			tokenizeBySpace(temp);
 			
+			/**
 			//add tokens to retArray
 			for(int inc2 = 0; inc2 < spaceArray.size(); inc++)
 			{
@@ -82,7 +83,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 			}
 			**/
 			
-			retArray.add(inc, pipeArray.get(inc));
+			retArray.add(inc, spaceArray.get(inc));
 			
 		}
 		
