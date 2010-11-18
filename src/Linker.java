@@ -41,7 +41,7 @@ public class Linker {
 		PrintWriter UserOut = new PrintWriter (new BufferedWriter(new FileWriter(LinkerUserReport)));
 		
 		//begin loop for multiple files
-		for(int inc = 0; inc < args.length && inc < 2; inc++)
+		for(int inc = 0; inc < args.length && inc < 5; inc++)
 		{
 		
 			//import object files into object arrays
@@ -370,12 +370,12 @@ public class Linker {
 	    String day = firstRec.get(4).substring(5);
 
 	    // check bounds for the day; anything else that should be checked ???
-	    if (!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365)) {
+/*	    if (!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365)) {
 
 	        // give a [funny ;} ] warning
 	        out.println("Warning: given day is outside reasonable bounds for the day."
 	                + "\nRecommended action: check syntax, or if in a leap year, please try again tomorrow! =)");
-	    }
+	    }*/
 
 	    // check the time field for proper syntax
 	    String time = firstRec.get(5);
@@ -581,13 +581,13 @@ public class Linker {
 	                out.println("Error at record " + i
 	                        + ":word of data field is not in proper syntax");
 	                isValid = false;
-	            } else if (!(Integer.parseInt(conv.hexToDec(dataWord)) <= 65535)) {
+	            }/* else if (!(Integer.parseInt(conv.hexToDec(dataWord)) <= 65535)) {
 
 	                // throw the error and "devalidate" the object file
 	                out.println("Error at record " + i
 	                        + ":word of data field is outside memory bounds");
 	                isValid = false;
-	            }
+	            }*/
 
 	            /*
 	             * field for number of adj's validate for integer between 0 and
@@ -1004,10 +1004,10 @@ public class Linker {
 
 					while (objectArrays.get(i).get(inc).get(j)
 							.equalsIgnoreCase("R")
-							|| objectArrays.get(i).get(inc).get(5)
+							|| objectArrays.get(i).get(inc).get(j)
 									.equalsIgnoreCase("E")) {
 
-						if (objectArrays.get(i).get(inc).get(5)
+						if (objectArrays.get(i).get(inc).get(j)
 								.equalsIgnoreCase("R")) {
 
 							// if R- type subtract startLocation from
@@ -1030,7 +1030,7 @@ public class Linker {
 						}
 
 						// if E type
-						if (objectArrays.get(i).get(inc).get(5)
+						if (objectArrays.get(i).get(inc).get(j)
 								.equalsIgnoreCase("E")) {
 
 							
@@ -1044,7 +1044,7 @@ public class Linker {
 										.equalsIgnoreCase("-")) {
 
 									intCode -= symbolTable
-											.getLocation(objectArrays.get(j)
+											.getLocation(objectArrays.get(i)
 													.get(inc).get(j + 2));
 								}
 
@@ -1064,6 +1064,9 @@ public class Linker {
 							else {
 								System.out.println("Linking error: " + objectArrays.get(i)
 										.get(inc).get(j + 2) + "does not have an entry point.");
+								
+								//set intCode to nop
+								intCode = 134217728;
 							}
 
 						}
@@ -1094,7 +1097,7 @@ public class Linker {
 					}
 					
 					//add to linkerfile here
-					out.println("LT|" + objectArrays.get(i).get(0).get(2) + "|" + loadAddr + 
+					out.println("LT|" + objectArrays.get(i).get(inc).get(2) + "|" + loadAddr + 
 							"|" + code + "|" + objectArrays.get(i).get(0).get(1));
 					
 					recordCount++;

@@ -1,10 +1,10 @@
-H|correctTierOne|AAAA|0000|2010:300|12:13:14|0003|0005|AAAB|SAL|V1.2.3|4|correctTierOne
+H|correctTierOne|0005|0000|2010:300|12:13:14|0003|0005|0002|SAL|V1.2.3|4|correctTierOne
 L|charmander|001A|start|correctTierOne
 L|charmeleon|001B|ent|correctTierOne
 L|charizard|001C|ent|correctTierOne
-T|1111|N|12345678|0|A|||correctTierOne
-T|2222|N|23456789|1|A|||correctTierOne
-T|3333|Y|26481357|1|R|+|charmeleon|correctTierOne
-T|4444|Y|11121314|1|E|-|charizard|correctTierOne
-T|5555|N|00800000|2|A||R|-|charmander|correctTierOne
+T|0000|N|12345678|0|A|||correctTierOne
+T|0001|N|23456789|1|A|||correctTierOne
+T|0002|Y|26481357|1|R|+|charmeleon|correctTierOne
+T|0003|Y|11121314|1|E|-|charizard|correctTierOne
+T|0004|N|00800000|2|A||R|-|charmander|correctTierOne
 E|000A|correctTierOne

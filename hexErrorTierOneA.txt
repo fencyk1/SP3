@@ -1,0 +1,10 @@
+H|hexErrorTierOne|AAAB|00000|2010:300|12:13:14|0003|0005|0AAB|SAL|V1.2.3|4|hexErrorTierOne
+L|squirtle|00A|start|hexErrorTierOne
+L|wartortle|00B|ent|hexErrorTierOne
+L|blastoise|00C|ent|hexErrorTierOne
+T|1111|N|00001234|0|hexErrorTierOne
+T|2222|N|00005678|1|A|||hexErrorTierOne
+T|3333|Y|00001357|2|R|+|wartortle|E|-|squirtle|hexErrorTierOne
+T|4444|Y|00800000|3|E|-|blastoise|R|-|squirtle|E|+|wartortle|hexErrorTierOne
+T|5555|N|00000800|4|A|||R|-|squirtle|E|+|blastoise|R|+|wartortle|hexErrorTierOne
+E|000A|hexErrorTierOne
