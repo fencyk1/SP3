@@ -189,56 +189,74 @@ public class Linker {
 		// declaring global variables to use throughout the method
 	    boolean isValid = true;
 
-	    // a converter used to convert hex values into decimal for validation purposes
+	    // a converter used to convert hex values into decimal for validation
+	    // purposes
 	    ConverterInterface conv = new Converter();
 
-	    // boolean value to check first line to see if it is a header record, as it should be;
-	    // after first check, acts as a swtich telling the method whether or not a program has begun
+	    // boolean value to check first line to see if it is a header record, as
+	    // it should be;
+	    // after first check, acts as a swtich telling the method whether or not
+	    // a program has begun
 	    boolean hasHeader = false;
 
-	    // boolean acting as a switch, telling the method whether or not a program has ended
+	    // boolean acting as a switch, telling the method whether or not a
+	    // program has ended
 	    boolean hasEnded = true;
 
-	    // keeps track of the total number of text records and linking records in the object file
-	    int textRecs = 0; 
+	    // keeps track of the total number of text records and linking records
+	    // in the object file
+	    int textRecs = 0;
 	    int linkRecs = 0;
 
-	    // boolean values act as switch for whether or not the number of text or linking records are correct
+	    // boolean values act as switch for whether or not the number of text or
+	    // linking records are correct
 	    boolean textWrong = false;
 	    boolean linkWrong = false;
 
 	    // create arraylist that holds the first record of the object file
 	    ArrayList<String> firstRec = new ArrayList<String>(objectArray.get(0));
 
-	    // the program name to be stored; should be consistent throughout the object file
-	    //[linker-adjusted loading address to use for overall linking file address]
+	    // output intermediate message for testing / validation reasons
+	    System.out.println("Now validating record:");
+
+	    for (int j = 0; j < firstRec.size() - 1; j++) {
+	        System.out.println(firstRec.get(j));
+	        System.out.println("|");
+	    }
+	    System.out.println(firstRec.get(firstRec.size() - 1));
+
+	    // the program name to be stored; should be consistent throughout the
+	    // object file
+	    // [linker-adjusted loading address to use for overall linking file
+	    // address]
 	    String linkLoadAddr = firstRec.get(3);
 
 	    // [execution start address for program]
 	    String execStartAddr = firstRec.get(8);
 
-	     //[program length]
+	    // [program length]
 	    String pgmLen = firstRec.get(2);
 
-	    //check for header
+	    // check for header
 
-	    // holds value of the first character in what should be the header record
+	    // holds value of the first character in what should be the header
+	    // record
 	    Character head = firstRec.get(0).charAt(0);
 
 	    /*
-	     if the first character isn't an 'H' or 'h', or if the length of the header file then
-	     report invalid header file error and abort.
-	    */
-	    if(! (head.equals('H') && firstRec.size() == 13))
-	    {
+	     * if the first character isn't an 'H' or 'h', or if the length of the
+	     * header file then report invalid header file error and abort.
+	     */
+	    if (!(head.equals('H') && firstRec.size() == 13)) {
 	        // errors put into linking file??
-	        System.out.println("Error at record 0: INVALID HEADER RECORD! ABORTING LINKING PROCESS");
+	        out.println("Error at record 0: INVALID HEADER RECORD! ABORTING LINKING PROCESS");
 	        return hasHeader;
 	    }
 
 	    // otherwise, dig through the header record
 
-	    // first things first, setting the switches correctly. This object file has a header record
+	    // first things first, setting the switches correctly. This object file
+	    // has a header record
 	    // and has not run into an end record yet.
 	    hasHeader = true;
 	    hasEnded = false;
@@ -247,71 +265,63 @@ public class Linker {
 	    String pgmName = firstRec.get(1);
 
 	    // check module name in second field with program name in 12th field
-	    if(!(pgmName.equals(firstRec.get(12))))
-	    {
-	        System.out.println("Error at record 0: module name and program name fields do not match");
+	    if (!(pgmName.equals(firstRec.get(12)))) {
+	        out.println("Error at record 0: module name and program name fields do not match");
 	        isValid = false;
 	    }
 
 	    // check validity of each hex field, then verify the length
 
-	    // if the program length is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(pgmLen) && pgmLen.length() <= 4))
-	    {
+	    // if the program length is not in valid hex OR is too long ...
+	    if (!(conv.isValidHex(pgmLen) && pgmLen.length() <= 4)) {
 
 	        // throw the error and declare invalidity
-	        System.out.println("Error at record 0: program length field is not in valid syntax: "
+	        out.println("Error at record 0: program length field is not in valid syntax: "
 	                + " \"hhhh\" where h is a valid hexadecimal number");
 	        isValid = false;
 	    }
 
-	    // if the assembler assigned program load address is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(linkLoadAddr) && linkLoadAddr.length() <= 4))
-	    {
+	    // if the assembler assigned program load address is not in valid hex OR
+	    // is too long ...
+	    if (!(conv.isValidHex(linkLoadAddr) && linkLoadAddr.length() <= 4)) {
 
 	        // throw the error and declare invalidity
-	        System.out.println("Error at record 0: assembler assigned program load address"
+	        out.println("Error at record 0: assembler assigned program load address"
 	                + " field is not in valid syntax: \"hhhh\" where h is a valid hexadecimal number");
 	        isValid = false;
 	    }
 
-	    // if the execution start address is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(execStartAddr) && execStartAddr.length() <= 4))
-	    {
+	    // if the execution start address is not in valid hex OR is too long ...
+	    if (!(conv.isValidHex(execStartAddr) && execStartAddr.length() <= 4)) {
 
 	        // throw the error and declare invalidity
-	        System.out.println("Error at record 0: execution start address field is not in"
+	        out.println("Error at record 0: execution start address field is not in"
 	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
 	        isValid = false;
 	    }
 
-	    // if the number of text records is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(firstRec.get(7)) && firstRec.get(7).length() <= 4))
-	    {
+	    // if the number of text records is not in valid hex OR is too long ...
+	    if (!(conv.isValidHex(firstRec.get(7)) && firstRec.get(7).length() <= 4)) {
 
 	        // throw the error and declare invalidity
-	        System.out.println("Error at record 0: number of text records field is not in"
+	        out.println("Error at record 0: number of text records field is not in"
 	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
 	        isValid = false;
-	    }
-	    else
-	    {
+	    } else {
 
 	        // save the value for the number of text records expected
 	        textRecs = Integer.parseInt(conv.hexToDec(firstRec.get(7)));
 	    }
 
-	    // if the number of linking records is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(firstRec.get(6)) && firstRec.get(6).length() <= 4))
-	    {
+	    // if the number of linking records is not in valid hex OR is too long
+	    // ...
+	    if (!(conv.isValidHex(firstRec.get(6)) && firstRec.get(6).length() <= 4)) {
 
 	        // throw the error and declare invalidity
-	        System.out.println("Error at record 0: number of linking records field is not in"
+	        out.println("Error at record 0: number of linking records field is not in"
 	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
 	        isValid = false;
-	    }
-	    else
-	    {
+	    } else {
 
 	        // save the value for the number of linking records expected
 	        linkRecs = Integer.parseInt(firstRec.get(6));
@@ -323,32 +333,29 @@ public class Linker {
 	    String year = firstRec.get(4).substring(0, 4);
 
 	    // if the year is too far in the future ...
-	    if(Integer.parseInt(year) > 2010)
-	    {
+	    if (Integer.parseInt(year) > 2010) {
 
-	        //  give a [funny ;} ] warning
-	        System.out.println("Warning: given year is too far in the future!"
+	        // give a [funny ;} ] warning
+	        out.println("Warning: given year is too far in the future!"
 	                + "\nRecommended action: give Marty McFly his time machine back.");
 	    }
 
-	     // if the year is too far in the past ...
-	    else if(Integer.parseInt(year) < 2010)
-	        {
+	    // if the year is too far in the past ...
+	    else if (Integer.parseInt(year) < 2010) {
 
-	            //  give a [funny ;} ] warning
-	            System.out.println("Warning: given year is too far in the past!"
-	                    + "\nRecommended action: borrow Marty McFly's time machine and go back to the future.");
-	        }
+	        // give a [funny ;} ] warning
+	        out.println("Warning: given year is too far in the past!"
+	                + "\nRecommended action: borrow Marty McFly's time machine and go back to the future.");
+	    }
 
 	    // string for the day portion of the date field
 	    String day = firstRec.get(4).substring(5);
 
 	    // check bounds for the day; anything else that should be checked ???
-	    if(!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365))
-	    {
+	    if (!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365)) {
 
-	        //  give a [funny ;} ] warning
-	        System.out.println("Warning: given day is outside reasonable bounds for the day."
+	        // give a [funny ;} ] warning
+	        out.println("Warning: given day is outside reasonable bounds for the day."
 	                + "\nRecommended action: check syntax, or if in a leap year, please try again tomorrow! =)");
 	    }
 
@@ -356,83 +363,91 @@ public class Linker {
 	    String time = firstRec.get(5);
 
 	    // if the time markings aren't in proper syntax and range ...
-	    if (!(  time.length() == 8 &&
-	            Integer.parseInt(time.substring(0,2))<24 &&
-	            Integer.parseInt(time.substring(3,5))<60 &&
-	            Integer.parseInt(time.substring(6))<60))
-	    {
+	    if (!(time.length() == 8 && Integer.parseInt(time.substring(0, 2)) < 24
+	            && Integer.parseInt(time.substring(3, 5)) < 60 && Integer
+	            .parseInt(time.substring(6)) < 60)) {
 
-	    //  give a [funny ;} ] warning
-	        System.out.println("Warning: given time is not in proper syntax or range: hh:mm:ss where hh == hours, mm == minutes, and ss == seconds."
+	        // give a [funny ;} ] warning
+	        out.println("Warning: given time is not in proper syntax or range: hh:mm:ss where hh == hours, mm == minutes, and ss == seconds."
 	                + "\nRecommended action: check syntax, or buy your assembler a watch! =P");
 	    }
 
+	    System.out.println(">>>>>>>>>>>>>>>>Record validation complete");
 	    // iteration to go through each next line to validate the object file
-	    for(int i = 1;i < objectArray.size();i++)
-	    {
+	    for (int i = 1; i < objectArray.size(); i++) {
 
-	    // create arraylist that holds the next record of the object file
-	    ArrayList<String> nextRec = new ArrayList<String>(objectArray.get(i));
+	        // create arraylist that holds the next record of the object file
+	        ArrayList<String> nextRec = new ArrayList<String>(
+	                objectArray.get(i));
 
-	    // distinguish the type of record by the letter of the first field
-	    Character recType = nextRec.get(0).charAt(0);
+	        // output intermediate message for testing / validation reasons
+	        System.out.println("Now validating record:");
 
-	        if(recType.equals('L'))
-	        {
+	        for (int j = 0; j < nextRec.size() - 1; j++) {
+	            System.out.println(nextRec.get(j));
+	            System.out.println("|");
+	        }
+	        System.out.println(nextRec.get(nextRec.size() - 1));
+
+	        // distinguish the type of record by the letter of the first field
+	        Character recType = nextRec.get(0).charAt(0);
+
+	        if (recType.equals('L')) {
 
 	            /*
-	             * if a linking record is encountered, it should be between a header and an end record.
-	             * thus, hasHeader should be true and hasEnded should be false
+	             * if a linking record is encountered, it should be between a
+	             * header and an end record. thus, hasHeader should be true and
+	             * hasEnded should be false
 	             */
 
 	            // if the above requirements isn't true ...
-	            if(!(hasHeader && !hasEnded))
-	            {
+	            if (!(hasHeader && !hasEnded)) {
 
 	                // throw the error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":misplaced linking record");
+	                out.println("Error at record " + i
+	                        + ":misplaced linking record");
 	                isValid = false;
 	            }
 
-	            // if the number of linking records given in the header record is exceeded, 
+	            // if the number of linking records given in the header record
+	            // is exceeded,
 	            // and the error switch is not thrown yet ...
-	            if(linkRecs <= 0 && !(linkWrong))
-	            {
+	            if (linkRecs <= 0 && !(linkWrong)) {
 
-	                // turn the switch, throw the error, and "devalidate" the object file
+	                // turn the switch, throw the error, and "devalidate" the
+	                // object file
 	                linkWrong = true;
-	                System.out.println("Error at record " + i + ":number of linking records given by header "
-	                         + "record is exceeded.");
+	                out.println("Error at record " + i
+	                        + ":number of linking records given by header "
+	                        + "record is exceeded.");
 	                isValid = false;
+	            } else {
+
+	                // otherwise, decrement the number of linking records to
+	                // find and validate the linking record
+	                linkRecs--;
 	            }
-	            else
-	            {
 
-	            // otherwise, decrement the number of linking records to find and validate the linking record
-	            linkRecs--;
-	            }
-
-	            // store the value of the name of the entry in the object file
-	            String entryName = nextRec.get(1);
-
-	            // TODO check label for proper syntax. If not in proper syntax, throw error and devalidate the object file
+	            // throw error and devalidate the object file
 
 	            // store the address of the name of the entry in the object file
 	            String entryAddress = nextRec.get(2);
 
-	            // if the address is not in proper syntax or if the memory bounds are violated ...
-	            if(!(conv.isValidHex(entryAddress)))
-	            {
+	            // if the address is not in proper syntax or if the memory
+	            // bounds are violated ...
+	            if (!(conv.isValidHex(entryAddress))) {
 
 	                // throw the error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":address of linking record entry is not in proper syntax");
+	                out.println("Error at record "
+	                        + i
+	                        + ":address of linking record entry is not in proper syntax");
 	                isValid = false;
-	            }
-	            else if (!(Integer.parseInt(conv.hexToDec(entryAddress)) <= 65535))
-	            {
+	            } else if (!(Integer.parseInt(conv.hexToDec(entryAddress)) <= 65535)) {
 
 	                // throw the error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":address of linking record entry is outside memory bounds");
+	                out.println("Error at record "
+	                        + i
+	                        + ":address of linking record entry is outside memory bounds");
 	                isValid = false;
 	            }
 
@@ -440,291 +455,482 @@ public class Linker {
 	            String entryType = nextRec.get(3);
 
 	            // if the type of the entry does not equal 'start' or 'ent' ...
-	            if(!(entryType.equals("start") || entryType.equals("ent")))
-	            {
+	            if (!(entryType.equals("start") || entryType.equals("ent"))) {
 
-	                // throw the invalid entry type error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":invalid entry type");
+	                // throw the invalid entry type error and "devalidate" the
+	                // object file
+	                out.println("Error at record " + i + ":invalid entry type");
 	                isValid = false;
 	            }
 
-	            // if the program name in the linking record doesn't match the given program name in the header record ...
-	            if(!(nextRec.get(3).equals(pgmName)))
-	            {
+	            // if the program name in the linking record doesn't match the
+	            // given program name in the header record ...
+	            if (!(nextRec.get(3).equals(pgmName))) {
 
-	                // throw the mismatched program name error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":program name in linking record does not match program"
-	                         + " name in corresponding header record");
+	                // throw the mismatched program name error and "devalidate"
+	                // the object file
+	                out.println("Error at record "
+	                        + i
+	                        + ":program name in linking record does not match program"
+	                        + " name in corresponding header record");
 	                isValid = false;
 	            }
 	        }
 
-	        else if(recType.equals('T'))
-	        {
+	        else if (recType.equals('T')) {
 
 	            /*
-	             * if a text record is encountered, it should be between a header and an end record.
-	             * thus, hasHeader should be true and hasEnded should be false
+	             * if a text record is encountered, it should be between a
+	             * header and an end record. thus, hasHeader should be true and
+	             * hasEnded should be false
 	             */
 
 	            // if the above requirements isn't true ...
-	            if(!(hasHeader && !hasEnded))
-	            {
+	            if (!(hasHeader && !hasEnded)) {
 
 	                // throw the error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":misplaced text record");
+	                out.println("Error at record " + i
+	                        + ":misplaced text record");
 	                isValid = false;
 	            }
 
-	            // if the number of text records given in the header record is exceeded, 
+	            // if the number of text records given in the header record is
+	            // exceeded,
 	            // and the error switch is not thrown yet ...
-	            if(linkRecs <= 0 && !(textWrong))
-	            {
-	                // turn the switch, throw the error, and "devalidate" the object file
+	            if (linkRecs <= 0 && !(textWrong)) {
+	                // turn the switch, throw the error, and "devalidate" the
+	                // object file
 	                textWrong = true;
-	                System.out.println("Error at record " + i + ":number of text records given by header "
-	                         + "record is exceeded.");
+	                out.println("Error at record " + i
+	                        + ":number of text records given by header "
+	                        + "record is exceeded.");
+	                isValid = false;
+	            } else {
+	                // otherwise, decrement the number of linking records to
+	                // find and validate the text record
+	                textRecs--;
+	            }
+
+
+	            /*
+	             * field for address in hex validate for four hex digits
+	             */
+
+	            // string for holding the text address in hex
+	            String textAddress = nextRec.get(1);
+
+	            // if the address is not in proper syntax or if the memory
+	            // bounds are violated ...
+	            if (!(conv.isValidHex(textAddress) && textAddress.length() == 4)) {
+
+	                // throw the error and "devalidate" the object file
+	                out.println("Error at record "
+	                        + i
+	                        + ":address of text record entry is not in proper syntax");
 	                isValid = false;
 	            }
-	            else
-	            {
-	            // otherwise, decrement the number of linking records to find and validate the text record
-	            textRecs--;
+
+	            /*
+	             * field for debug code validate for Y or N
+	             */
+	            String debugCode = nextRec.get(2);
+
+	            if (!(debugCode.equalsIgnoreCase("Y") || debugCode
+	                    .equalsIgnoreCase("N"))) {
+	                // throw the error and "devalidate" the object file
+	                out.println("Error at record " + i + ":invalid debug code.");
+	                isValid = false;
 	            }
 
-	            // TODO validation for text records
+	            /*
+	             * field for data word validate for eight hex digits and within
+	             * mem bounds
+	             */
+	            String dataWord = nextRec.get(3);
+
+	            // if the address is not in proper syntax or if the memory
+	            // bounds are violated ...
+	            if (!(conv.isValidHex(dataWord) && dataWord.length() == 8)) {
+
+	                // throw the error and "devalidate" the object file
+	                out.println("Error at record " + i
+	                        + ":word of data field is not in proper syntax");
+	                isValid = false;
+	            } else if (!(Integer.parseInt(conv.hexToDec(dataWord)) <= 65535)) {
+
+	                // throw the error and "devalidate" the object file
+	                out.println("Error at record " + i
+	                        + ":word of data field is outside memory bounds");
+	                isValid = false;
+	            }
+
+	            /*
+	             * field for number of adj's validate for integer between 0 and
+	             * 4 inclusive
+	             * 
+	             * sub-iteration for loop going from i=0 to n
+	             * 
+	             * if A, then nothing and nothing
+	             * 
+	             * if R or E, then check for + or -, then for possible label
+	             * 
+	             * else adj operand is invalid
+	             */
+
+	            // integer value for the number of adjustments that need to be
+	            // made
+	            int adjNum = Integer.parseInt(nextRec.get(4));
+
+	            // if the number of adjustments is not within allowed bounds ...
+	            if (!(0 <= adjNum && adjNum <= 4)) {
+	                // throw the adjustments out of bounds error and
+	                // "devalidate" the object file
+	                out.println("Error at record " + i
+	                        + ":number of adjustments is outside bounds -->"
+	                        + "integer n where 0<=n<=4");
+	                isValid = false;
+	            }
+
+	            // integer to help with the checking for all proper syntax and
+	            // format of files
+	            int aug = 5;
+
+	            // sub-iteration to check all adjustments
+	            for (int k = 0; k < adjNum; k++) {
+	                // String for the type of adjustment
+	                String adjType = nextRec.get(aug);
+
+	                // check for the type of adjustment
+	                if (adjType.equalsIgnoreCase("A")) {
+	                    k = adjNum;
+	                } else if (adjType.equalsIgnoreCase("R")) {
+	                    if (!(nextRec.get(aug + 1).equals("+") || nextRec.get(
+	                            aug + 1).equals("-"))) {
+
+	                        // throw the invalid augmentation operand error and
+	                        // "devalidate" the object file
+	                        out.println("Error at record " + i
+	                                + ":invalid augmentation operand");
+	                        isValid = false;
+	                    }
+	                } else if (adjType.equalsIgnoreCase("E")) {
+	                    if (!(nextRec.get(aug + 1).equals("+") || nextRec.get(
+	                            aug + 1).equals("-"))) {
+
+	                        // throw the invalid augmentation operand error and
+	                        // "devalidate" the object file
+	                        out.println("Error at record " + i
+	                                + ":invalid augmentation operand");
+	                        isValid = false;
+	                    }
+
+	                } else {
+
+	                    // throw the invalid adjustment type error and
+	                    // "devalidate" the object file
+	                    out.println("Error at record " + i
+	                            + ":invalid adjustment type");
+	                    isValid = false;
+	                }
+
+	                // aug will be increased to perform the format check of the
+	                // next adjustment
+	                aug = aug + 3;
+	            }
+
+	            String prog = nextRec.get(nextRec.size() - 1);
+	            // if the program name in the end record doesn't match the given
+	            // program name in the header record ...
+	            if (!((nextRec.get(nextRec.size() - 1)).equals(pgmName))) {
+
+	                // throw the mismatched program name error and "devalidate"
+	                // the object file
+	                out.println("Error at record "
+	                        + i
+	                        + ":program name in text record does not match program"
+	                        + " name in corresponding header record");
+	                isValid = false;
+	            }
+
+	            if (!isValid) {
+	                // replace invalid text record with a nop and set isValid to
+	                // true for next record
+	                isValid = true;
+
+	                nextRec = new ArrayList<String>(6);
+	                // nop for invalid text record
+	                nextRec.set(0, "T");
+	                nextRec.set(1, textAddress);
+	                nextRec.set(2, debugCode);
+	                nextRec.set(3, "00800000");
+	                nextRec.set(4, "0");
+	                nextRec.set(5, prog);
+
+	                objectArray.set(i, nextRec);
+
+	            }
 	        }
 
-	        else if(recType.equals('E'))
-	        {
+	        else if (recType.equals('E')) {
 
-	        // TODO boolean switching
+
 	            /*
-	             * if an end record is encountered, it should be after a header record.
-	             * thus, hasHeader should be true and hasEnded should be false at this point
+	             * if an end record is encountered, it should be after a header
+	             * record. thus, hasHeader should be true and hasEnded should be
+	             * false at this point
 	             */
 
 	            // if the above requirements isn't true ...
-	            if(!(hasHeader && !hasEnded))
-	            {
+	            if (!(hasHeader && !hasEnded)) {
 
 	                // throw the error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":misplaced end record or missing header record");
+	                out.println("Error at record " + i
+	                        + ":misplaced end record or missing header record");
 	                isValid = false;
 	            }
 
 	            // if the above requirements are true ...
-	            else
-	            {
+	            else {
 
-	                // change the boolean values to reflect what should be the end of the object file
+	                // change the boolean values to reflect what should be the
+	                // end of the object file
 	                hasHeader = false;
 	                hasEnded = true;
 	            }
-	            // if the hex field for total number of records isn't in proper hex ...
-	            if(!(conv.isValidHex(nextRec.get(1)) && nextRec.get(1).length() == 4))
-	            {
+	            // if the hex field for total number of records isn't in proper
+	            // hex ...
+	            if (!(conv.isValidHex(nextRec.get(1)) && nextRec.get(1)
+	                    .length() == 4)) {
 
 	                // throw the error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ": \"total number of records\" field is not in proper syntax");
+	                out.println("Error at record "
+	                        + i
+	                        + ": \"total number of records\" field is not in proper syntax");
 	                isValid = false;
 	            }
 
-	            // create and store value for total number of records for validation
+	            // create and store value for total number of records for
+	            // validation
 	            int recNum = Integer.parseInt(nextRec.get(1));
 
-	            // of the total number of records given by the end record is not equal to
+	            // of the total number of records given by the end record is not
+	            // equal to
 	            // the literal number of records in the entire object file ...
-	            if(!(objectArray.size() == recNum))
-	            {
+	            if (!(objectArray.size() == recNum)) {
 	                // throw the error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":total number of records given by the end record is "
+	                out.println("Error at record "
+	                        + i
+	                        + ":total number of records given by the end record is "
 	                        + "not equal to the total number of records in the object file!");
 	                isValid = false;
 	            }
 
-	            // if the program name in the end record doesn't match the given program name in the header record ...
-	            if(!(nextRec.get(2).equals(pgmName)))
-	            {
+	            // if the program name in the end record doesn't match the given
+	            // program name in the header record ...
+	            if (!(nextRec.get(2).equals(pgmName))) {
 
-	                // throw the mismatched program name error and "devalidate" the object file
-	                System.out.println("Error at record " + i + ":program name in end record does not match program"
-	                         + " name in corresponding header record");
+	                // throw the mismatched program name error and "devalidate"
+	                // the object file
+	                out.println("Error at record "
+	                        + i
+	                        + ":program name in end record does not match program"
+	                        + " name in corresponding header record");
 	                isValid = false;
 	            }
 
 	        }
 
-	        else if(recType.equals('H'))
-	        {
+	        else if (recType.equals('H')) {
 
-	            // TODO boolean check for duplicate header records
+	            // boolean value to check first line to see if it is a header record, as
+	            // it should be;
+	            // after first check, acts as a swtich telling the method whether or not
+	            // a program has begun
+	            hasHeader = true;
+
+	            // boolean acting as a switch, telling the method whether or not a
+	            // program has ended
+	            hasEnded = false;
 
 	            // throw an error for duplicate header record
-	            System.out.println("Error at record " + i + ": another header record detected in object file.");
+	            out.println("Error at record " + i
+	                    + ": another header record detected in object file.");
 	            isValid = false;
 
-	    // the program name to be stored; should be consistent throughout the object file
-	    //[linker-adjusted loading address to use for overall linking file address]
-	    String linkLoadAddrs = nextRec.get(3);
+	            // the program name to be stored; should be consistent
+	            // throughout the object file
+	            // [linker-adjusted loading address to use for overall linking
+	            // file address]
+	            String linkLoadAddrs = nextRec.get(3);
 
-	    // [execution start address for program]
-	    String execStartAddrs = nextRec.get(8);
+	            // [execution start address for program]
+	            String execStartAddrs = nextRec.get(8);
 
-	     //[program length]
-	    String pgmLens = nextRec.get(2);
+	            // [program length]
+	            String pgmLens = nextRec.get(2);
 
-	    // first things first, setting the switches correctly. This object file has a header record
-	    // and has not run into an end record yet.
-	    hasHeader = true;
-	    hasEnded = false;
+	            // first things first, setting the switches correctly. This
+	            // object file has a header record
+	            // and has not run into an end record yet.
+	            hasHeader = true;
+	            hasEnded = false;
 
-	    // save the name of the program
-	    pgmName = nextRec.get(1);
+	            // save the name of the program
+	            pgmName = nextRec.get(1);
 
-	    // check module name in second field with program name in 12th field
-	    if(!(pgmName.equals(nextRec.get(12))))
-	    {
-	        System.out.println("Error at record " + i + ": module name and program name fields do not match");
-	        isValid = false;
-	    }
+	            // check module name in second field with program name in 12th
+	            // field
+	            if (!(pgmName.equals(nextRec.get(12)))) {
+	                out.println("Error at record "
+	                        + i
+	                        + ": module name and program name fields do not match");
+	                isValid = false;
+	            }
 
-	    // check validity of each hex field, then verify the length
+	            // check validity of each hex field, then verify the length
 
-	    // if the program length is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(pgmLens) && pgmLens.length() <= 4))
-	    {
+	            // if the program length is not in valid hex OR is too long ...
+	            if (!(conv.isValidHex(pgmLens) && pgmLens.length() <= 4)) {
 
-	        // throw the error and declare invalidity
-	        System.out.println("Error at record " + i + ": program length field is not in valid syntax: "
-	                + " \"hhhh\" where h is a valid hexadecimal number");
-	        isValid = false;
-	    }
+	                // throw the error and declare invalidity
+	                out.println("Error at record " + i
+	                        + ": program length field is not in valid syntax: "
+	                        + " \"hhhh\" where h is a valid hexadecimal number");
+	                isValid = false;
+	            }
 
-	    // if the assembler assigned program load address is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(linkLoadAddrs) && linkLoadAddrs.length() <= 4))
-	    {
+	            // if the assembler assigned program load address is not in
+	            // valid hex OR is too long ...
+	            if (!(conv.isValidHex(linkLoadAddrs) && linkLoadAddrs.length() <= 4)) {
 
-	        // throw the error and declare invalidity
-	        System.out.println("Error at record " + i + ": assembler assigned program load address"
-	                + " field is not in valid syntax: \"hhhh\" where h is a valid hexadecimal number");
-	        isValid = false;
-	    }
+	                // throw the error and declare invalidity
+	                out.println("Error at record "
+	                        + i
+	                        + ": assembler assigned program load address"
+	                        + " field is not in valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	                isValid = false;
+	            }
 
-	    // if the execution start address is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(execStartAddrs) && execStartAddrs.length() <= 4))
-	    {
+	            // if the execution start address is not in valid hex OR is too
+	            // long ...
+	            if (!(conv.isValidHex(execStartAddrs) && execStartAddrs
+	                    .length() <= 4)) {
 
-	        // throw the error and declare invalidity
-	        System.out.println("Error at record " + i + ": execution start address field is not in"
-	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
-	        isValid = false;
-	    }
+	                // throw the error and declare invalidity
+	                out.println("Error at record "
+	                        + i
+	                        + ": execution start address field is not in"
+	                        + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	                isValid = false;
+	            }
 
-	    // if the number of text records is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(nextRec.get(7)) && nextRec.get(7).length() <= 4))
-	    {
+	            // if the number of text records is not in valid hex OR is too
+	            // long ...
+	            if (!(conv.isValidHex(nextRec.get(7)) && nextRec.get(7)
+	                    .length() <= 4)) {
 
-	        // throw the error and declare invalidity
-	        System.out.println("Error at record " + i + ": number of text records field is not in"
-	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
-	        isValid = false;
-	    }
-	    else
-	    {
+	                // throw the error and declare invalidity
+	                out.println("Error at record "
+	                        + i
+	                        + ": number of text records field is not in"
+	                        + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	                isValid = false;
+	            } else {
 
-	        // save the value for the number of text records expected
-	        textRecs = Integer.parseInt(conv.hexToDec(nextRec.get(7)));
-	    }
+	                // save the value for the number of text records expected
+	                textRecs = Integer.parseInt(conv.hexToDec(nextRec.get(7)));
+	            }
 
-	    // if the number of linking records is not in valid hex OR is too long ... 
-	    if(!(conv.isValidHex(nextRec.get(6)) && nextRec.get(6).length() <= 4))
-	    {
+	            // if the number of linking records is not in valid hex OR is
+	            // too long ...
+	            if (!(conv.isValidHex(nextRec.get(6)) && nextRec.get(6)
+	                    .length() <= 4)) {
 
-	        // throw the error and declare invalidity
-	        System.out.println("Error at record " + i + ": number of linking records field is not in"
-	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
-	        isValid = false;
-	    }
-	    else
-	    {
+	                // throw the error and declare invalidity
+	                out.println("Error at record "
+	                        + i
+	                        + ": number of linking records field is not in"
+	                        + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	                isValid = false;
+	            } else {
 
-	        // save the value for the number of linking records expected
-	        linkRecs = Integer.parseInt(nextRec.get(6));
-	    }
+	                // save the value for the number of linking records expected
+	                linkRecs = Integer.parseInt(nextRec.get(6));
+	            }
 
-	    // --------check the date field for proper syntax and values--------- //
+	            // --------check the date field for proper syntax and
+	            // values--------- //
 
-	    // string for the year portion of the date field
-	    String years = nextRec.get(4).substring(0, 4);
+	            // string for the year portion of the date field
+	            String years = nextRec.get(4).substring(0, 4);
 
-	    // if the year is too far in the future ...
-	    if(Integer.parseInt(years) > 2010)
-	    {
+	            // if the year is too far in the future ...
+	            if (Integer.parseInt(years) > 2010) {
 
-	        //  give a [funny ;} ] warning
-	        System.out.println("Warning: given year is too far in the future!"
-	                + "\nRecommended action: give Marty McFly his time machine back.");
-	    }
+	                // give a [funny ;} ] warning
+	                out.println("Warning: given year is too far in the future!"
+	                        + "\nRecommended action: give Marty McFly his time machine back.");
+	            }
 
-	     // if the year is too far in the past ...
-	    else if(Integer.parseInt(years) < 2010)
-	        {
+	            // if the year is too far in the past ...
+	            else if (Integer.parseInt(years) < 2010) {
 
-	            //  give a [funny ;} ] warning
-	            System.out.println("Warning: given year is too far in the past!"
-	                    + "\nRecommended action: borrow Marty McFly's time machine and go back to the future.");
+	                // give a [funny ;} ] warning
+	                out.println("Warning: given year is too far in the past!"
+	                        + "\nRecommended action: borrow Marty McFly's time machine and go back to the future.");
+	            }
+
+	            // string for the day portion of the date field
+	            String days = nextRec.get(4).substring(5);
+
+	            // check bounds for the day; anything else that should be
+	            // checked ???
+	            if (!(Integer.parseInt(days) >= 0 && Integer.parseInt(days) <= 365)) {
+
+	                // give a [funny ;} ] warning
+	                out.println("Warning: given day is outside reasonable bounds for the day."
+	                        + "\nRecommended action: check syntax, or if in a leap year, please try again tomorrow! =)");
+	            }
+
+	            // check the time field for proper syntax
+	            String times = nextRec.get(5);
+
+	            // if the time markings aren't in proper syntax and range ...
+	            if (!(times.length() == 8
+	                    && Integer.parseInt(times.substring(0, 2)) < 24
+	                    && Integer.parseInt(times.substring(3, 5)) < 60 && Integer
+	                    .parseInt(times.substring(6)) < 60)) {
+
+	                // give a [funny ;} ] warning
+	                out.println("Warning: given time is not in proper syntax or range: hh:mm:ss where hh == hours, mm == minutes, and ss == seconds."
+	                        + "\nRecommended action: check syntax, or buy your assembler a watch! =P");
+	            }
+
+	        } else {
+
+
+	            out.println("Error at record "
+	                    + i
+	                    + ":invalid record ");
 	        }
-
-	    // string for the day portion of the date field
-	    String days = nextRec.get(4).substring(5);
-
-	    // check bounds for the day; anything else that should be checked ???
-	    if(!(Integer.parseInt(days) >= 0 && Integer.parseInt(days) <= 365))
-	    {
-
-	        //  give a [funny ;} ] warning
-	        System.out.println("Warning: given day is outside reasonable bounds for the day."
-	                + "\nRecommended action: check syntax, or if in a leap year, please try again tomorrow! =)");
+	        System.out.println(">>>>>>>>>>>>>>>>Record validation complete");
 	    }
 
-	    // check the time field for proper syntax
-	    String times = nextRec.get(5);
-
-	    // if the time markings aren't in proper syntax and range ...
-	    if (!(  times.length() == 8 &&
-	            Integer.parseInt(times.substring(0,2))<24 &&
-	            Integer.parseInt(times.substring(3,5))<60 &&
-	            Integer.parseInt(times.substring(6))<60))
-	    {
-
-	    //  give a [funny ;} ] warning
-	        System.out.println("Warning: given time is not in proper syntax or range: hh:mm:ss where hh == hours, mm == minutes, and ss == seconds."
-	                + "\nRecommended action: check syntax, or buy your assembler a watch! =P");
-	    }
-
-	        }
-	        else
-	        {
-
-	        // invalid record
-	        }
-	    }
-
-	    // if the validation has not aborted by this point, the object file is good enough to link
+	    // if the validation has not aborted by this point, the object file is
+	    // good enough to link
 	    // therefore the method will return true if it makes it to this point
-	    return true;
+	    return isValid;
 	    /**
-	        for a header record:
-
-
-	        -check syntax of each part of the record
-	                ==> for unallowed syntax, several errors to break it down
-	            - decrement textRecs and linkRecs each time one of the corresponding text/linking records are found
-	            - if either get to zero: 
-	                -throw an error [naming convention for error ???]
-	    */
-	    //check the rest of the records  have valid labels and sizes
+	     * for a header record:
+	     * 
+	     * 
+	     * -check syntax of each part of the record ==> for unallowed syntax,
+	     * several errors to break it down - decrement textRecs and linkRecs
+	     * each time one of the corresponding text/linking records are found -
+	     * if either get to zero: -throw an error [naming convention for error
+	     * ???]
+	     */
+	    // check the rest of the records have valid labels and sizes
 
 		//-----------------------------_______________ START OF KASHFLOW EDIT _______________-----------------------------//
 	     /*
@@ -907,6 +1113,7 @@ public class Linker {
 							
 							//increment j by 2
 							j += 2;
+						}
 						
 					}
 
@@ -916,25 +1123,25 @@ public class Linker {
 					if (objectArrays.get(i).get(inc).get(5).equalsIgnoreCase("E"))
 					{
 						
-						int j = 5;
+						int k = 5;
 						
-						while (objectArrays.get(i).get(inc).get(j).equalsIgnoreCase("E")) {
+						while (objectArrays.get(i).get(inc).get(k).equalsIgnoreCase("E")) {
 							
 							
 							//if - subtract address of label from intCode
-							if ( objectArrays.get(i).get(inc).get(j + 1).equalsIgnoreCase("-"))
+							if ( objectArrays.get(i).get(inc).get(k + 1).equalsIgnoreCase("-"))
 							{
-								intCode -= symbolTable.getLocation(objectArrays.get(i).get(inc).get(j + 2));
+								intCode -= symbolTable.getLocation(objectArrays.get(k).get(inc).get(k + 2));
 							}
 							
 							//if + subtract address of label from intCode
-							else if ( objectArrays.get(i).get(inc).get(j + 1).equalsIgnoreCase("+"))
+							else if ( objectArrays.get(i).get(inc).get(k + 1).equalsIgnoreCase("+"))
 							{
-								intCode += symbolTable.getLocation(objectArrays.get(i).get(inc).get(j + 2));
+								intCode += symbolTable.getLocation(objectArrays.get(i).get(inc).get(k + 2));
 							}
 							
 							//increment j by 3 to get to next possible 'E'
-							j += 3;
+							k += 3;
 						}
 						
 						
