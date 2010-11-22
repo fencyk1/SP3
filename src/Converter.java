@@ -149,6 +149,7 @@ public class Converter implements ConverterInterface{
 	 * @param binary The binary number to be converted into decimal.
 	 * @return The converted decimal integer.
 	 */
+	@SuppressWarnings("unused")
 	private int binToDec(String binary) {
 		int decimal = 0;
 		int counter = 0;

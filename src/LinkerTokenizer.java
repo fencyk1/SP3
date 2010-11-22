@@ -92,7 +92,7 @@ public class LinkerTokenizer implements LinkerTokenizerInterface {
 		
 		
 		//return
-		return retArray;
+		return pipeArray;
 	}
 
 }

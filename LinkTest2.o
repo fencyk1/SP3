@@ -1,0 +1,7 @@
+H|LinkTest2|0004|0000|2010:11:22|11:35:50|0001|4|0000|SAL|Version # 2.03|Revision # 3|LinkTest2
+T|0000|N|e3400000|1|E|+|A|LinkTest2
+T|0001|N|e3600000|1|E|+|B|LinkTest2
+T|0002|N|04898020|1|A|LinkTest2
+T|0003|N|20000000|1|A|LinkTest2
+L|LinkTest2|0|start|LinkTest2
+E|0007|LinkTest2

@@ -367,7 +367,8 @@ public class Linker {
 	    }
 
 	    // string for the day portion of the date field
-	    String day = firstRec.get(4).substring(5);
+	    @SuppressWarnings("unused")
+		String day = firstRec.get(4).substring(5);
 
 	    // check bounds for the day; anything else that should be checked ???
 /*	    if (!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365)) {
@@ -996,8 +997,10 @@ public class Linker {
 				{
 
 					//store hex code as string
-					String code = objectArrays.get(i).get(inc).get(3);
-					Integer intCode = Integer.parseInt(converter.hexToDec(code));
+					String code = objectArrays.get(i).get(inc).get(3).toUpperCase();
+					
+					//make last 4 digits into an int
+					Integer intCode = Integer.parseInt(converter.hexToDec(code.substring(4, 8)));
 
 					// mod code if it is R, or E type
 					int j = 5;
@@ -1065,23 +1068,32 @@ public class Linker {
 								System.out.println("Linking error: " + objectArrays.get(i)
 										.get(inc).get(j + 2) + "does not have an entry point.");
 								
-								//set intCode to nop
-								intCode = 134217728;
+								//set intCode to -1 to flag nop
+								intCode = -1;
 							}
 
 						}
 
 					}
 					
-					//convert code back to hex
-					code = converter.decimalToHex(intCode.toString());
+					//if no error
 					
-					//fill missing leading zeros in code
-					while (code.length() < 8)
-					{
-						code = "0" + code;
+					if (intCode != -1) {
+						//convert code back to hex
+						String temp = converter.decimalToHex(intCode.toString());
+						//fill missing leading zeros in temp
+						while (temp.length() < 4) {
+							temp = "0" + temp;
+						}
+						
+						//add temp to end of code
+						code = code.substring(0, 4) + temp;
 					}
 					
+					//else insert nop
+					else {
+						code = "08000000";
+					}
 					
 					//get loadAddress
 					loadAddress = Integer.parseInt(converter.hexToDec(objectArrays.get(i).get(inc).get(1)));
