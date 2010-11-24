@@ -1059,8 +1059,7 @@ public class Linker {
 													.get(inc).get(j + 2));
 								}
 
-								// increment j by 3 to get to next possible 'E'
-								j += 3;
+								
 							}
 
 							//if ext var is not defined, print error to console
@@ -1070,8 +1069,10 @@ public class Linker {
 								
 								//set intCode to -1 to flag nop
 								intCode = -1;
+								
 							}
-
+							// increment j by 3 to get to next possible 'E'
+							j += 3;
 						}
 
 					}
