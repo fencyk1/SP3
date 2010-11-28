@@ -1,0 +1,55 @@
+H|DataTest_03|000c|000e|2010:11:24|15:57:37|0001|000c|000c|SAL|Version # 2.03|Revision # 3|DataTest_03 
+T|000e|N|00000080|1|A|DataTest_03 
+T|000f|N|00000064|1|A|DataTest_03 
+T|0010|N|444f4720|1|A|DataTest_03 
+T|0011|N|00000000|2|R|+|Jupiter|R|-|Saturn|DataTest_03 
+T|0012|N|c020000e|1|R|+|000e|DataTest_03 
+T|0013|N|04248018|1|A|DataTest_03 
+T|0014|N|4024001c|1|A|DataTest_03 
+T|0015|N|77440000|1|E|+|mars|DataTest_03 
+T|0016|N|08480802|1|A|DataTest_03 
+T|0017|N|9c40000f|1|R|+|000e|DataTest_03 
+T|0018|N|9c20001b|1|A|DataTest_03 
+T|0019|N|20000000|1|A|DataTest_03 
+L|DataTest_03|e|Start|DataTest_03 
+E|15|DataTest_03 
+H|DutyTest_01|001c|0000|2010:1119|12:49:41|0001|1c|0011|SAL|Version # 2.03|Revision # 3|DutyTest_01 
+T|0000|N|00000000|1|A|DutyTest_01 
+T|0001|N|00000000|1|A|DutyTest_01 
+T|0002|N|00000000|1|A|DutyTest_01 
+T|0003|N|00000000|1|A|DutyTest_01 
+T|0004|N|00000011|1|A|DutyTest_01 
+T|0005|N|00000009|1|A|DutyTest_01 
+T|0006|N|00000010|1|A|DutyTest_01 
+T|0010|N|02000000|1|A|DutyTest_01 
+T|0011|N|02000000|1|A|DutyTest_01 
+T|0012|N|02000000|1|A|DutyTest_01 
+T|0013|N|02000000|1|A|DutyTest_01 
+T|0014|N|02000000|1|A|DutyTest_01 
+T|0015|N|02000000|1|A|DutyTest_01 
+T|0016|N|02000000|1|A|DutyTest_01 
+T|0017|N|02000000|1|A|DutyTest_01 
+T|0018|N|02000000|1|A|DutyTest_01 
+T|0019|N|02000000|1|A|DutyTest_01 
+T|001a|N|02000000|1|A|DutyTest_01 
+T|001b|N|02000000|1|A|DutyTest_01 
+T|001c|N|02000000|1|A|DutyTest_01 
+T|001d|N|6c900005|1|A|DutyTest_01 
+T|001e|N|02000000|1|A|DutyTest_01 
+T|001f|N|02000000|1|A|DutyTest_01 
+T|0020|N|08000400|1|A|DutyTest_01 
+T|0021|N|02000000|1|A|DutyTest_01 
+T|0022|N|02000000|1|A|DutyTest_01 
+T|0023|N|02000000|1|A|DutyTest_01 
+T|0024|N|02000000|1|A|DutyTest_01 
+L|DutyTest_01|0|Program Name|DutyTest_01 
+E|31|DutyTest_01 
+H|DontTakeThisTest_00|0006|0100|2010:1128|01:13:30|0001|0006|0100|SAL|Version # 2.03|Revision # 3|DontTakeThisTest_00 
+T|0100|N|61616220|1|A|DontTakeThisTest_00 
+T|0101|N|02000000|1|A|DontTakeThisTest_00 
+T|0102|N|20000002|1|A|DontTakeThisTest_00 
+T|0103|N|02000000|1|A|DontTakeThisTest_00 
+T|0104|N|02000000|1|A|DontTakeThisTest_00 
+T|0105|N|02000000|1|A|DontTakeThisTest_00 
+L|DontTakeThisTest_00|100|Start|DontTakeThisTest_00 
+E|9|DontTakeThisTest_00

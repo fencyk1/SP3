@@ -1,0 +1,121 @@
+H|DataTest_03|000c|000e|2010:11:24|15:57:37|0001|000c|000c|SAL|Version # 2.03|Revision # 3|DataTest_03 
+Error at record 0: module name and program name fields do not match
+T|000e|N|00000080|1|A|DataTest_03 
+Error at record 1:program name in text record does not match program name in corresponding header record
+T|000f|N|00000064|1|A|DataTest_03 
+Error at record 2:program name in text record does not match program name in corresponding header record
+T|0010|N|444f4720|1|A|DataTest_03 
+Error at record 3:program name in text record does not match program name in corresponding header record
+T|0011|N|00000000|2|R|+|Jupiter|R|-|Saturn|DataTest_03 
+Error at record 4:program name in text record does not match program name in corresponding header record
+T|0012|N|c020000e|1|R|+|000e|DataTest_03 
+Error at record 5:program name in text record does not match program name in corresponding header record
+T|0013|N|04248018|1|A|DataTest_03 
+Error at record 6:program name in text record does not match program name in corresponding header record
+T|0014|N|4024001c|1|A|DataTest_03 
+Error at record 7:program name in text record does not match program name in corresponding header record
+T|0015|N|77440000|1|E|+|mars|DataTest_03 
+Error at record 8:program name in text record does not match program name in corresponding header record
+T|0016|N|08480802|1|A|DataTest_03 
+Error at record 9:program name in text record does not match program name in corresponding header record
+T|0017|N|9c40000f|1|R|+|000e|DataTest_03 
+Error at record 10:program name in text record does not match program name in corresponding header record
+T|0018|N|9c20001b|1|A|DataTest_03 
+Error at record 11:program name in text record does not match program name in corresponding header record
+T|0019|N|20000000|1|A|DataTest_03 
+Error at record 12:program name in text record does not match program name in corresponding header record
+L|DataTest_03|e|Start|DataTest_03 
+Error at record 13:invalid entry type
+Error at record 13:program name in linking record does not match program name in corresponding header record
+E|15|DataTest_03 
+Error at record 14: "total number of records" field is not in proper syntax
+Error at record 14:program name in end record does not match program name in corresponding header record
+H|DutyTest_01|001c|0000|2010:1119|12:49:41|0001|1c|0011|SAL|Version # 2.03|Revision # 3|DutyTest_01 
+Error at record 15: another header record detected in object file.
+Error at record 15: module name and program name fields do not match
+Warning: given day is outside reasonable bounds for the day.
+Recommended action: check syntax, or if in a leap year, please try again tomorrow! =)
+T|0000|N|00000000|1|A|DutyTest_01 
+Error at record 16:program name in text record does not match program name in corresponding header record
+T|0001|N|00000000|1|A|DutyTest_01 
+Error at record 17:program name in text record does not match program name in corresponding header record
+T|0002|N|00000000|1|A|DutyTest_01 
+Error at record 18:program name in text record does not match program name in corresponding header record
+T|0003|N|00000000|1|A|DutyTest_01 
+Error at record 19:program name in text record does not match program name in corresponding header record
+T|0004|N|00000011|1|A|DutyTest_01 
+Error at record 20:program name in text record does not match program name in corresponding header record
+T|0005|N|00000009|1|A|DutyTest_01 
+Error at record 21:program name in text record does not match program name in corresponding header record
+T|0006|N|00000010|1|A|DutyTest_01 
+Error at record 22:program name in text record does not match program name in corresponding header record
+T|0010|N|02000000|1|A|DutyTest_01 
+Error at record 23:program name in text record does not match program name in corresponding header record
+T|0011|N|02000000|1|A|DutyTest_01 
+Error at record 24:program name in text record does not match program name in corresponding header record
+T|0012|N|02000000|1|A|DutyTest_01 
+Error at record 25:program name in text record does not match program name in corresponding header record
+T|0013|N|02000000|1|A|DutyTest_01 
+Error at record 26:program name in text record does not match program name in corresponding header record
+T|0014|N|02000000|1|A|DutyTest_01 
+Error at record 27:program name in text record does not match program name in corresponding header record
+T|0015|N|02000000|1|A|DutyTest_01 
+Error at record 28:program name in text record does not match program name in corresponding header record
+T|0016|N|02000000|1|A|DutyTest_01 
+Error at record 29:program name in text record does not match program name in corresponding header record
+T|0017|N|02000000|1|A|DutyTest_01 
+Error at record 30:program name in text record does not match program name in corresponding header record
+T|0018|N|02000000|1|A|DutyTest_01 
+Error at record 31:program name in text record does not match program name in corresponding header record
+T|0019|N|02000000|1|A|DutyTest_01 
+Error at record 32:program name in text record does not match program name in corresponding header record
+T|001a|N|02000000|1|A|DutyTest_01 
+Error at record 33:program name in text record does not match program name in corresponding header record
+T|001b|N|02000000|1|A|DutyTest_01 
+Error at record 34:program name in text record does not match program name in corresponding header record
+T|001c|N|02000000|1|A|DutyTest_01 
+Error at record 35:program name in text record does not match program name in corresponding header record
+T|001d|N|6c900005|1|A|DutyTest_01 
+Error at record 36:program name in text record does not match program name in corresponding header record
+T|001e|N|02000000|1|A|DutyTest_01 
+Error at record 37:program name in text record does not match program name in corresponding header record
+T|001f|N|02000000|1|A|DutyTest_01 
+Error at record 38:program name in text record does not match program name in corresponding header record
+T|0020|N|08000400|1|A|DutyTest_01 
+Error at record 39:program name in text record does not match program name in corresponding header record
+T|0021|N|02000000|1|A|DutyTest_01 
+Error at record 40:program name in text record does not match program name in corresponding header record
+T|0022|N|02000000|1|A|DutyTest_01 
+Error at record 41:program name in text record does not match program name in corresponding header record
+T|0023|N|02000000|1|A|DutyTest_01 
+Error at record 42:program name in text record does not match program name in corresponding header record
+T|0024|N|02000000|1|A|DutyTest_01 
+Error at record 43:program name in text record does not match program name in corresponding header record
+L|DutyTest_01|0|Program Name|DutyTest_01 
+Error at record 44:invalid entry type
+Error at record 44:program name in linking record does not match program name in corresponding header record
+E|31|DutyTest_01 
+Error at record 45: "total number of records" field is not in proper syntax
+Error at record 45:program name in end record does not match program name in corresponding header record
+H|DontTakeThisTest_00|0006|0100|2010:1128|01:13:30|0001|0006|0100|SAL|Version # 2.03|Revision # 3|DontTakeThisTest_00 
+Error at record 46: another header record detected in object file.
+Error at record 46: module name and program name fields do not match
+Warning: given day is outside reasonable bounds for the day.
+Recommended action: check syntax, or if in a leap year, please try again tomorrow! =)
+T|0100|N|61616220|1|A|DontTakeThisTest_00 
+Error at record 47:program name in text record does not match program name in corresponding header record
+T|0101|N|02000000|1|A|DontTakeThisTest_00 
+Error at record 48:program name in text record does not match program name in corresponding header record
+T|0102|N|20000002|1|A|DontTakeThisTest_00 
+Error at record 49:program name in text record does not match program name in corresponding header record
+T|0103|N|02000000|1|A|DontTakeThisTest_00 
+Error at record 50:program name in text record does not match program name in corresponding header record
+T|0104|N|02000000|1|A|DontTakeThisTest_00 
+Error at record 51:program name in text record does not match program name in corresponding header record
+T|0105|N|02000000|1|A|DontTakeThisTest_00 
+Error at record 52:program name in text record does not match program name in corresponding header record
+L|DontTakeThisTest_00|100|Start|DontTakeThisTest_00 
+Error at record 53:invalid entry type
+Error at record 53:program name in linking record does not match program name in corresponding header record
+E|9|DontTakeThisTest_00
+Error at record 54: "total number of records" field is not in proper syntax

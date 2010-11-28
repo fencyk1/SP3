@@ -161,12 +161,14 @@ public class Linker {
 			out.print("LE|" + recordCount + "|");
 			//print module name
 			out.println(objectArrays.get(0).get(0).get(1));
+			
 			//finish
 			out.close();
-			UserOut.close();
 			System.out.println(">>>>>>>> Linking Complete <<<<<<<<");
 		}
 		
+		//close userout
+		UserOut.close();
 
 	}
 	
@@ -915,7 +917,7 @@ public class Linker {
 
 	            // check bounds for the day; anything else that should be
 	            // checked ???
-	            if (!(Integer.parseInt(days) >= 0 && Integer.parseInt(days) <= 365)) {
+	           if (!(Integer.parseInt(days) >= 0 && Integer.parseInt(days) <= 365)) {
 
 	                // give a [funny ;} ] warning
 	                out.println("Warning: given day is outside reasonable bounds for the day."
