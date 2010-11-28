@@ -125,6 +125,8 @@ public class LinkerTable implements LinkerTableInterface {
 			
 		}
 		
+		out.close();
+		
 	}
 
 	@Override

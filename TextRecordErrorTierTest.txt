@@ -1,0 +1,24 @@
+H|DataTestFaulty_01|0014|0000|2010:11:18|18:09:14|0001|14|001A|SAL|Version # 2.03|Revision # 3|DataTestFaulty_01 
+T|0000|N|0000000d|1|A|DataTestFaulty_01 
+T|0001|N|0000000d|1|A|DataTestFaulty_01 
+T|0002|N|45452020|1|A|DataTestFaulty_01 
+T|0003|N|65666665|1|A|DataTestFaulty_01 
+T|0004|N|65666665|1|A|DataTestFaulty_01 
+T|0005|N|0000000d|1|A|DataTestFaulty_01 
+L|facepalm|1000|ent|DataTestFaulty_01 
+T|0006|N|00000000|1|A|DataTestFaulty_01 
+T|007|N|00000000|1|A|DataTestFaulty_01 
+T|10008|N|00000000|1|A|DataTestFaulty_01 
+T|0009|1|00000000|1|A|DataTestFaulty_01 
+T|000a|N|8fffffgg|5|A|DataTestFaulty_01 
+T|000b|N|00000000|1|F|DataTestFaulty_01 
+T|000c|N|00000000|1|A|DataTestFaulty_01 
+T|1ffff|N|0080000t|1|A|DataTestFaulty_1 
+T|000e|N|00000000|1|A|DataTestFaulty_01 
+T|000f|N|00000000|1|A|DataTestFaulty_01 
+T|0010|N|00000000|1|A|DataTestFaulty_01 
+T|0011|N|00000000|1|A|DataTestFaulty_01 
+T|0012|N|00000000|1|A|DataTestFaulty_01 
+L|DataTestFaulty_01|0|Program Name|DataTestFaulty_01 
+E|23|DataTestFaulty_01 
+T|0013|N|03A46020|1|A|DataTestFaulty_01

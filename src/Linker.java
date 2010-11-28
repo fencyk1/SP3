@@ -34,6 +34,7 @@ public class Linker {
 		LinkerTableInterface GST = new LinkerTable();
 		Integer moduleLength = 0;
 		ConverterInterface converter = new Converter();
+		boolean breakOut = false;
 		
 		
 
@@ -93,7 +94,9 @@ public class Linker {
 			//else, output error 
 			else
 			{
-				
+				System.out.println("Fatal Error: Invalid object file.");
+				System.out.println("Linking Terminated");
+				breakOut = true;
 			}
 					
 			//store in objectArrays
@@ -102,86 +105,67 @@ public class Linker {
 		//end for loop for multiple files
 		}
 		
-		//populate symbol table
-		System.out.println(">>>>>>>> Popluating Symbol Table <<<<<<<<");
-		populateSymbolTable(GST);
 		
-		
-		
-		
-		//things that need to be done outside of loop
-		//they need all objects to be processed before they can be done
-		
-		
-		//create linker file
-		System.out.println(">>>>>>>> Building Linker Load Module <<<<<<<<");
-		
-		
+		if (breakOut == false) {
+			//populate symbol table
+			System.out.println(">>>>>>>> Popluating Symbol Table <<<<<<<<");
+			populateSymbolTable(GST);
+			//create global symbol file
+			System.out.println(">>>>>>>> Printing Symbol Table <<<<<<<<");
+			GST.printToFile();
+			//create linker file
+			System.out.println(">>>>>>>> Building Linker Load Module <<<<<<<<");
 			//create file itself
-		File linkerFile = new File("LoadModule.ld");
-		
-		//create printWriter for linkerFile
-		PrintWriter out = new PrintWriter (new BufferedWriter(new FileWriter(linkerFile)));
-		
-		//Set up the date and time for printing.		
-		DateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd|HH:mm:ss");
-        Date date = new Date();
-        
-        //set module length
-        moduleLength = GST.getLength();
-        
-        //convert moduleLength to a string and format it
-        String moduleLen = converter.decimalToHex(moduleLength.toString());
-        while(moduleLen.length() < 4)
-        {
-        	moduleLen = "0" + moduleLen;
-        }
-		
-		//create header record
-		//print "LH|" execStartAddress "|"
-		out.print("LH|" + objectArrays.get(0).get(0).get(8) + "|");
-		//print moduleName "|"
-		out.print(objectArrays.get(0).get(0).get(1) + "|");
-		//print moduleLength in hex followed by a "\"
-		out.print(moduleLen + "|");
-		//print load address followed by "|"
-		out.print(objectArrays.get(0).get(0).get(3) + "|");
-		//print date "|" time "|SAL-LINK|
-		out.print(dateFormat.format(date) + "|SAL-LINK|");
-		//print version# "|" 
-		out.print(objectArrays.get(0).get(0).get(10) + "|");
-		//print revision# "|" 
-		out.print(objectArrays.get(0).get(0).get(11) + "|");
-		//print module name
-		out.println(objectArrays.get(0).get(0).get(1));
-		
-		
-		
+			File linkerFile = new File("LoadModule.ld");
+			//create printWriter for linkerFile
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(linkerFile)));
+			//Set up the date and time for printing.		
+			DateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd|HH:mm:ss");
+			Date date = new Date();
+			//set module length
+			moduleLength = GST.getLength();
+			//convert moduleLength to a string and format it
+			String moduleLen = converter.decimalToHex(moduleLength.toString());
+			while (moduleLen.length() < 4) {
+				moduleLen = "0" + moduleLen;
+			}
+			//create header record
+			//print "LH|" execStartAddress "|"
+			out.print("LH|" + objectArrays.get(0).get(0).get(8) + "|");
+			//print moduleName "|"
+			out.print(objectArrays.get(0).get(0).get(1) + "|");
+			//print moduleLength in hex followed by a "\"
+			out.print(moduleLen + "|");
+			//print load address followed by "|"
+			out.print(objectArrays.get(0).get(0).get(3) + "|");
+			//print date "|" time "|SAL-LINK|
+			out.print(dateFormat.format(date) + "|SAL-LINK|");
+			//print version# "|" 
+			out.print(objectArrays.get(0).get(0).get(10) + "|");
+			//print revision# "|" 
+			out.print(objectArrays.get(0).get(0).get(11) + "|");
+			//print module name
+			out.println(objectArrays.get(0).get(0).get(1));
 			//create text records
-		int textRecordCount = buildLinkerFile(out, GST);
-		
-		//create variable to hold total number of records. It is equal to textRecordCOunt + 2
-		String recordCount = Integer.toString(textRecordCount + 2);
-		
-		//format recordCount
-		recordCount = converter.decimalToHex(recordCount);
-		while(recordCount.length() < 4)
-		{
-			recordCount = "0" + recordCount;
-		}
-		
-		
+			int textRecordCount = buildLinkerFile(out, GST);
+			//create variable to hold total number of records. It is equal to textRecordCOunt + 2
+			String recordCount = Integer.toString(textRecordCount + 2);
+			//format recordCount
+			recordCount = converter.decimalToHex(recordCount);
+			while (recordCount.length() < 4) {
+				recordCount = "0" + recordCount;
+			}
 			//create end record
-		//print "LE|" total records "|"
-		out.print("LE|" + recordCount + "|");
-		//print module name
-		out.println(objectArrays.get(0).get(0).get(1));		
-		
-		
-		//finish
-		out.close();
-		UserOut.close();
-		System.out.println(">>>>>>>> Linking Complete <<<<<<<<");
+			//print "LE|" total records "|"
+			out.print("LE|" + recordCount + "|");
+			//print module name
+			out.println(objectArrays.get(0).get(0).get(1));
+			//finish
+			out.close();
+			UserOut.close();
+			System.out.println(">>>>>>>> Linking Complete <<<<<<<<");
+		}
 		
 
 	}
