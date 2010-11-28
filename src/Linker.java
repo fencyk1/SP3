@@ -195,9 +195,9 @@ public class Linker {
 	{
 		
 		//create converter
-		ConverterInterface converter = new Converter();
-		
-		// declaring global variables to use throughout the method
+	    ConverterInterface converter = new Converter();
+
+	    // declaring global variables to use throughout the method
 	    boolean isValid = true;
 
 	    // a converter used to convert hex values into decimal for validation
@@ -236,13 +236,33 @@ public class Linker {
 	    }
 	    System.out.println(firstRec.get(firstRec.size() - 1));
 
-        // output record to user report file
-        for (int j = 0; j < firstRec.size() - 1; j++) {
-            out.print(firstRec.get(j));
-            out.print("|");
-        }
-        out.println(firstRec.get(firstRec.size() - 1));
-        
+	    // output record to user report file
+	    for (int j = 0; j < firstRec.size() - 1; j++) {
+	        out.print(firstRec.get(j));
+	        out.print("|");
+	    }
+	    out.println(firstRec.get(firstRec.size() - 1));
+
+	    // check for header
+
+	    // holds value of the first character in what should be the header
+	    // record
+	    Character head = firstRec.get(0).charAt(0);
+
+
+	    /*
+	     * if the first character isn't an 'H' or 'h', or if the length of the
+	     * header file then report invalid header file error and abort.
+	     */
+	    if (!(head.equals('H') && firstRec.size() == 13)) {
+	        // errors put into linking file??
+	        out.println("Error at record 0: INVALID HEADER RECORD! ABORTING LINKING PROCESS");
+	        return hasHeader;
+	    }
+
+
+
+
 	    // the program name to be stored; should be consistent throughout the
 	    // object file
 	    // [linker-adjusted loading address to use for overall linking file
@@ -255,21 +275,7 @@ public class Linker {
 	    // [program length]
 	    String pgmLen = firstRec.get(2);
 
-	    // check for header
 
-	    // holds value of the first character in what should be the header
-	    // record
-	    Character head = firstRec.get(0).charAt(0);
-
-	    /*
-	     * if the first character isn't an 'H' or 'h', or if the length of the
-	     * header file then report invalid header file error and abort.
-	     */
-	    if (!(head.equals('H') && firstRec.size() == 13)) {
-	        // errors put into linking file??
-	        out.println("Error at record 0: INVALID HEADER RECORD! ABORTING LINKING PROCESS");
-	        return hasHeader;
-	    }
 
 	    // otherwise, dig through the header record
 
@@ -315,6 +321,14 @@ public class Linker {
 	        // throw the error and declare invalidity
 	        out.println("Error at record 0: execution start address field is not in"
 	                + " valid syntax: \"hhhh\" where h is a valid hexadecimal number");
+	        isValid = false;
+	    }
+
+	    else if (!(Integer.parseInt(conv.hexToDec(execStartAddr)) < (Integer.parseInt(conv.hexToDec(linkLoadAddr))))
+	            && (Integer.parseInt(conv.hexToDec(execStartAddr)) < (Integer.parseInt(conv.hexToDec(pgmLen))))) {
+
+	        // throw the error and declare invalidity
+	        out.println("Error at record 0: invalid execution start address");
 	        isValid = false;
 	    }
 
@@ -368,10 +382,10 @@ public class Linker {
 
 	    // string for the day portion of the date field
 	    @SuppressWarnings("unused")
-		String day = firstRec.get(4).substring(5);
+	    String day = firstRec.get(4).substring(5);
 
 	    // check bounds for the day; anything else that should be checked ???
-/*	    if (!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365)) {
+	/* if (!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365)) {
 
 	        // give a [funny ;} ] warning
 	        out.println("Warning: given day is outside reasonable bounds for the day."
@@ -406,6 +420,7 @@ public class Linker {
 	            System.out.print(nextRec.get(j));
 	            System.out.print("|");
 	        }
+
 	        System.out.println(nextRec.get(nextRec.size() - 1));
 
 	        // output record to user report file
@@ -413,8 +428,12 @@ public class Linker {
 	            out.print(nextRec.get(j));
 	            out.print("|");
 	        }
+	        if(nextRec.size() - 1 < 0)
+	        {
+	            break;
+	        }
 	        out.println(nextRec.get(nextRec.size() - 1));
-	        
+
 	        // distinguish the type of record by the letter of the first field
 	        Character recType = nextRec.get(0).charAt(0);
 
@@ -739,7 +758,7 @@ public class Linker {
 	            // create and store value for total number of records for
 	            // validation
 	            int recNum = Integer.parseInt(converter.hexToDec((nextRec.get(1))));
-	            
+
 	            // of the total number of records given by the end record is not
 	            // equal to
 	            // the literal number of records in the entire object file ...
@@ -946,7 +965,7 @@ public class Linker {
 	    // if the validation has not aborted by this point, the object file is
 	    // good enough to link
 	    // therefore the method will return true if it makes it to this point
-	    
+
 	    System.out.println("Object file validation complete");
 	    return isValid;
 	}
