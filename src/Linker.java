@@ -242,7 +242,7 @@ public class Linker {
 	     */
 	    if (!(head.equals('H') && firstRec.size() == 13)) {
 	        // errors put into linking file??
-	        out.println("Error at record 0: INVALID HEADER RECORD! ABORTING LINKING PROCESS");
+	        out.println("/nError at record 0: INVALID HEADER RECORD! ABORTING LINKING PROCESS");
 	        return hasHeader;
 	    }
 
@@ -371,13 +371,23 @@ public class Linker {
 	    String day = firstRec.get(4).substring(5);
 
 	    // check bounds for the day; anything else that should be checked ???
-	/* if (!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365)) {
+	 
+	    try
+	    {
+	    if (!(Integer.parseInt(day) >= 0 && Integer.parseInt(day) <= 365)) {
 
 	        // give a [funny ;} ] warning
 	        out.println("Warning: given day is outside reasonable bounds for the day."
 	                + "\nRecommended action: check syntax, or if in a leap year, please try again tomorrow! =)");
-	    }*/
+	    }
+	    }
+	    catch (NumberFormatException e)
+	    {
+	    	 // give a [funny ;} ] warning
+	        out.println("Warning: given day is outside reasonable bounds for the day."
+	                + "\nRecommended action: check syntax, or if in a leap year, please try again tomorrow! =)");
 
+	    }
 	    // check the time field for proper syntax
 	    String time = firstRec.get(5);
 
