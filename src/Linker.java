@@ -310,13 +310,13 @@ public class Linker {
 	        isValid = false;
 	    }
 
-	    else if (!(Integer.parseInt(conv.hexToDec(execStartAddr)) < (Integer.parseInt(conv.hexToDec(linkLoadAddr))))
+	   /* else if (!(Integer.parseInt(conv.hexToDec(execStartAddr)) < (Integer.parseInt(conv.hexToDec(linkLoadAddr))))
 	            && (Integer.parseInt(conv.hexToDec(execStartAddr)) < (Integer.parseInt(conv.hexToDec(pgmLen))))) {
 
 	        // throw the error and declare invalidity
 	        out.println("Error at record 0: invalid execution start address");
 	        isValid = false;
-	    }
+	    }*/
 
 	    // if the number of text records is not in valid hex OR is too long ...
 	    if (!(conv.isValidHex(firstRec.get(7)) && firstRec.get(7).length() <= 4)) {
@@ -496,7 +496,7 @@ public class Linker {
 	            String entryType = nextRec.get(3);
 
 	            // if the type of the entry does not equal 'start' or 'ent' ...
-	            if (!(entryType.equals("start") || entryType.equals("ent"))) {
+	            if (!(entryType.equalsIgnoreCase("start") || entryType.equalsIgnoreCase("ent"))) {
 
 	                // throw the invalid entry type error and "devalidate" the
 	                // object file
@@ -535,6 +535,8 @@ public class Linker {
 	                isValid = false;
 	            }
 
+	            
+	            //TODO:
 	            // if the number of text records given in the header record is
 	            // exceeded,
 	            // and the error switch is not thrown yet ...
@@ -755,7 +757,7 @@ public class Linker {
 	            // validation
 	            int recNum = Integer.parseInt(converter.hexToDec((nextRec.get(1))));
 
-	            // of the total number of records given by the end record is not
+	            // if the total number of records given by the end record is not
 	            // equal to
 	            // the literal number of records in the entire object file ...
 	            if (!(objectArray.size() == recNum)) {
@@ -958,6 +960,16 @@ public class Linker {
 	        System.out.println(">>>>>>>>>>>>>>>>Record validation complete");
 	    }
 
+	    //if too many text recs, throw error
+	    if(textRecs > 0){
+	    	out.println("Warning: Too many text records.");
+	    }
+	    
+	    //if too many linking recs
+	    if(linkRecs > 0){
+	    	out.println("Warning: Too many linking records.");
+	    }
+	    
 	    // if the validation has not aborted by this point, the object file is
 	    // good enough to link
 	    // therefore the method will return true if it makes it to this point
@@ -1020,74 +1032,93 @@ public class Linker {
 					// mod code if it is R, or E type
 					int j = 5;
 
-					while (objectArrays.get(i).get(inc).get(j)
+					//int count number of relocations
+					int relocationCount = 0;
+					boolean correctRelCount = true;
+					
+					while ((objectArrays.get(i).get(inc).get(j)
 							.equalsIgnoreCase("R")
 							|| objectArrays.get(i).get(inc).get(j)
-									.equalsIgnoreCase("E")) {
+									.equalsIgnoreCase("E")) && correctRelCount) {
 
-						if (objectArrays.get(i).get(inc).get(j)
-								.equalsIgnoreCase("R")) {
-
-							// if R- type subtract startLocation from
-							// address section of code
-							if (objectArrays.get(i).get(inc).get(j + 1)
-									.equalsIgnoreCase("-")) {
-								intCode -= startLocation;
-							}
-
-							// if R+ type add startLocation to address
-							// section of code
-							else if (objectArrays.get(i).get(inc).get(j + 1)
-									.equalsIgnoreCase("-")) {
-								intCode += startLocation;
-							}
-
-							// increment j by 2
-							j += 2;
-
+						if(relocationCount > 3){
+							correctRelCount = false;
+							System.out.println("Too many relocations at the line " + inc);
+							System.out.println("Ignoring excess relocations.");
 						}
+						else {
+							relocationCount = relocationCount + 1;
 
-						// if E type
-						if (objectArrays.get(i).get(inc).get(j)
-								.equalsIgnoreCase("E")) {
+							if (objectArrays.get(i).get(inc).get(j)
+									.equalsIgnoreCase("R")) {
 
-							
-							//check if reference variable is defined
-							if (symbolTable.isDefined(objectArrays.get(i)
-									.get(inc).get(j + 2)))
-							{
-								
-								// if - subtract address of label from intCode
+								// if R- type subtract startLocation from
+								// address section of code
 								if (objectArrays.get(i).get(inc).get(j + 1)
 										.equalsIgnoreCase("-")) {
-
-									intCode -= symbolTable
-											.getLocation(objectArrays.get(i)
-													.get(inc).get(j + 2));
+									intCode -= startLocation;
 								}
 
-								// if + subtract address of label from intCode
+								// if R+ type add startLocation to address
+								// section of code
 								else if (objectArrays.get(i).get(inc)
-										.get(j + 1).equalsIgnoreCase("+")) {
-									intCode += symbolTable
-											.getLocation(objectArrays.get(i)
-													.get(inc).get(j + 2));
+										.get(j + 1).equalsIgnoreCase("-")) {
+									intCode += startLocation;
 								}
 
-								
+								// increment j by 3
+								j += 3;
+
 							}
 
-							//if ext var is not defined, print error to console
-							else {
-								System.out.println("Linking error: " + objectArrays.get(i)
-										.get(inc).get(j + 2) + "does not have an entry point.");
-								
-								//set intCode to -1 to flag nop
-								intCode = -1;
-								
+							// if E type
+							if (objectArrays.get(i).get(inc).get(j)
+									.equalsIgnoreCase("E")) {
+
+								// check if reference variable is defined
+								if (symbolTable.isDefined(objectArrays.get(i)
+										.get(inc).get(j + 2))) {
+
+									// if - subtract address of label from
+									// intCode
+									if (objectArrays.get(i).get(inc).get(j + 1)
+											.equalsIgnoreCase("-")) {
+
+										intCode -= symbolTable
+												.getLocation(objectArrays
+														.get(i).get(inc)
+														.get(j + 2));
+									}
+
+									// if + subtract address of label from
+									// intCode
+									else if (objectArrays.get(i).get(inc)
+											.get(j + 1).equalsIgnoreCase("+")) {
+										intCode += symbolTable
+												.getLocation(objectArrays
+														.get(i).get(inc)
+														.get(j + 2));
+									}
+
+								}
+
+								// if ext var is not defined, print error to
+								// console
+								else {
+									System.out.println("Linking error: "
+											+ objectArrays.get(i).get(inc)
+													.get(j + 2)
+											+ "does not have an entry point.");
+
+									// set intCode to -1 to flag nop
+									intCode = -1;
+
+								}
+								// increment j by 3 to get to next possible 'E'
+								j += 3;
 							}
-							// increment j by 3 to get to next possible 'E'
-							j += 3;
+							
+						
 						}
 
 					}
@@ -1216,8 +1247,14 @@ public class Linker {
 						//modify location due to load address differences
 						location = location + diffOfLoc;
 
-						//add to symbol table
-						symbolTable.add(name, type, location);
+						if(symbolTable.isDefined(name)){
+							System.out.println(name + " is a duplicate variable. Using first occurence.");
+						}
+						else{
+							//add to symbol table
+							symbolTable.add(name, type, location);
+						}
+						
 					}
 
 				}
